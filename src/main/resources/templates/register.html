@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>注册</title>
+	<link rel="stylesheet" href="../static/libs/particles/css/style.css">
+	<link rel="stylesheet" href="../static/libs/sweetalert2/sweetalert2.min.css">
+	<link rel="stylesheet" href="../static/css/base.css">
+	<link rel="stylesheet" href="../static/css/login.css">
+	<link href="css/layx.min.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<!-- particles.js container -->
+	<div id="particles-js"></div>
+	<div id="wrapper">
+		<div>
+			<img src="../static/img/lanbitou_logo.png" />
+			<h2>韶华考勤，让滑水怪无处可藏</h2>
+		</div>
+		<nav class="switch_nav">
+			<a href="javascript:;" id="switch_signup" class="switch_btn on">注册</a>
+			<a href="login" id="switch_login" class="switch_btn">登录</a>
+		</nav>
+		<form method="post" th:action="@{/register}">
+			<ul class="group_input">
+				<li>
+					<input type="text" placeholder="游戏ID" class="name required" id="name" name="nickName" />
+				</li>
+				<li>
+					<input type="password" placeholder="密码(不少于6位)" class="psd required" id="psd" name="userPassword" />
+				</li>
+				<li>
+					<input type="text" placeholder="邮箱" class="mobile required" id="email" name="email" />
+				</li>
+				<li>
+					<input type="text" placeholder="请输入邮箱验证码" class="mobile required" id="emailcheck"
+						name="emailcheck" />
+				</li>
+				<li>
+					<button type="button" class="createEmailCode" onclick="createEmailCode()">发送验证码</button>
+				</li>
+			</ul>
+			<span class="result" th:text="${registerErrorMsg}" style="color: red;height: 25px;line-height: 40px;
+			font-size: 15px;"></span>
+			<button type="submit" class="submit_btn" id="btnSubmit">注册韶华</button>
+			<span class="agreement-tip">点击「注册」按钮，即代表你同意<a href="javascript:;">《韶华协议》</a></span>
+		</form>
+		<div class="QRcode_btn">
+			<div type="submit" class="submit_btn download_btn">请皮卡丘喝奶茶</div>
+			<div class="QRcode">
+				<img src="../static/img/QRcode.png" alt="QRcode" />
+				<div class="box"></div>
+			</div>
+		</div>
+		<div id="footer">
+			<span>&copy;2017韶华</span><span>·</span><a href="javascript:;">韶华圆桌</a><span>·</span><a
+				href="javascript:;">发现</a><span>·</span><a href="javascript:;">移动应用</a><span>·</span><a
+				href="javascript:;">使用机构账号登录</a><span>·</span><a href="javascript:;">联系我们</a><span>·</span><a
+				href="javascript:;">加入韶华</a><br />
+			<span>·</span><a
+				href="javascript:;">京ICP证110745号</a><span>·</span><span>京公网安备xxxxxxxxx号</span><span>·</span><a
+				href="javascript:;">出版物经营许可证</a>
+		</div>
+	</div>
+	<script src="../static/libs/jquery-1.12.4/jquery.min.js"></script>
+	<script src="../static/libs/sweetalert2/sweetalert2.min.js"></script>
+	<script src="../static/libs/particles/particles.min.js"></script>
+	<script src="../static/libs/particles/js/app.js"></script>
+	<script src="/libs/Layx/layx.min.js"></script>
+	<script src="/js/errorCode.js"></script>
+	<script>
+		$(".download_btn").click(function () {
+			if ($(".QRcode").css("display") == "none") {
+				$(".QRcode").show();
+				$(".download_btn").text("关闭二维码");
+			} else {
+				$(".QRcode").hide();
+				$(".download_btn").text("请皮卡丘喝奶茶");
+			}
+		});
+	</script>
+	<script th:inline="javascript">
+		$(function () {
+			$("#emailcheck").hide();
+			$(".createEmailCode").hide();
+			$("#btnSubmit").attr('disabled', true);
+			// Retrieve
+			$("#name").val(sessionStorage.getItem("name"));
+			$("#email").val(sessionStorage.getItem("email"));
+			$("#psd").val(sessionStorage.getItem("psd"));
+			sessionStorage.clear;
+			//为表单元素添加失去焦点事件
+			$("form :input").blur(function () {
+				$(".result").empty();
+				var $parent = $(this).parent();
+				$parent.find(".msg").remove(); //删除以前的提醒元素（find()：查找匹配元素集中元素的所有匹配元素）
+				//验证姓名
+				if ($(this).is("#name")) {
+					var nameVal = $.trim(this.value);
+					var regName = /[~#^$@%&!*()<>:;'"{}【】  ]/;
+					if (nameVal == "" || nameVal.length < 2 || regName.test(nameVal)) {
+						var errorMsg = " 姓名非空，长度2-20位，不包含特殊字符！";
+						$parent.append("<span class='msg onError'>" + errorMsg + "</span>");
+					} else {
+						var okMsg = " 输入正确";
+						$parent.append("<span class='msg onSuccess'>" + okMsg + "</span>");
+					}
+				}
+				//验证邮箱
+				if ($(this).is("#email")) {
+					var email = $.trim(this.value);
+					if (!checkEmail(email)) {
+						var errorMsg = " 请输入正确的邮箱格式！";
+						$(".createEmailCode").hide();
+						$("#emailcheck").hide();
+						$parent.append("<span class='msg onError'>" + errorMsg + "</span>");
+					} else {
+						var okMsg = " 输入正确";
+						$parent.append("<span class='msg onSuccess'>" + okMsg + "</span>");
+						$(".createEmailCode").show();
+					}
+				}
+				//验证密码
+				if ($(this).is("#psd")) {
+					var psdVal = $.trim(this.value);
+					var regPsd = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/;
+					if (psdVal == "" || !regPsd.test(psdVal)) {
+						var errorMsg = " 密码为6-20位字母、数字的组合！";
+						$parent.append("<span class='msg onError'>" + errorMsg + "</span>");
+					} else {
+						var okMsg = " 输入正确";
+						$parent.append("<span class='msg onSuccess'>" + okMsg + "</span>");
+					}
+				}
+				//验证验证码
+				if ($(this).is("#emailcheck")) {
+					var input = $.trim(this.value);
+					if (!checkRate(input)) {
+						var errorMsg = " 验证码为6位数字的组合！";
+						$parent.append("<span class='msg onError'>" + errorMsg + "</span>");
+					} else {
+						var okMsg = " 输入正确";
+						$parent.append("<span class='msg onSuccess'>" + okMsg + "</span>");
+					}
+				}
+			}).keyup(function () {
+				//triggerHandler 防止事件执行完后，浏览器自动为标签获得焦点
+				$(this).triggerHandler("blur");
+				checkAll();
+			}).focus(function () {
+				$(this).triggerHandler("blur");
+				checkAll();
+			});
+
+			//点击重置按钮时，通过trigger()来触发文本框的失去焦点事件
+			$("#btnSubmit").click(function () {
+				sessionStorage.setItem("name", $("#name").val());
+				sessionStorage.setItem("email", $("#email").val());
+				sessionStorage.setItem("psd", $("#psd").val());
+			});
+		})
+
+		function checkAll() {
+			var name = $("#name").val();
+			var psd = $("#psd").val();
+			var email = $("#email").val();
+			var emailcheck = $("#emailcheck").val();
+			var numError = $("form .onError").length;
+			if (numError == 0 && name.length != 0 && psd.length != 0 && email.length != 0 && emailcheck.length != 0) {
+				$("#btnSubmit").attr('disabled', false);
+			} else {
+				$("#btnSubmit").attr('disabled', true);
+			}
+		};
+
+		$("#name, #psd, #email, #emailcheck").keyup(() => {
+			var name = $("#name").val();
+			var psd = $("#psd").val();
+			var email = $("#email").val();
+			var emailcheck = $("#emailcheck").val();
+			var numError = $("form .onError").length;
+			if (numError == 0 && name.length != 0 && psd.length != 0 && email.length != 0 && emailcheck.length != 0) {
+				$("#btnSubmit").attr('disabled', false);
+			} else {
+				$("#btnSubmit").attr('disabled', true);
+			}
+
+		});
+		function checkEmail(str) {
+			var reg = /^[0-9a-zA-Z_.-]+[@][0-9a-zA-Z_.-]+([.][a-zA-Z]+){1,2}$/; //正则表达式
+			if (str === "") { //输入不能为空
+				return false;
+			} else if (!reg.test(str)) { //正则验证不通过，格式不对
+				return false;
+			} else {
+				return true;
+			}
+		}
+		function checkRate(input) {
+			if ($.isNumeric(input) && input.length == 6) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		function createEmailCode() {
+			$("#emailcheck").show();
+			$(".createEmailCode").attr('disabled', true);
+			daojishi();
+			$.ajax({
+				type: "POST",
+				url: "/emailCode",
+				async: true,
+				data: {
+					'email': $("#email").val()
+				},
+				success: function (returnValue) {
+					if (returnValue == 200) {
+						$('.createEmailCode').html("邮件发送成功");
+						setTimeout("$('.createEmailCode').html(60)", 1000);						
+						daojishi();
+					} else{
+						errorCode(returnValue);
+					}
+				},
+				error: function (error) {
+					errorCode(error.status);
+				}
+			});
+			$(".createEmailCode").html("邮件发送中...");
+			;
+		}
+		function daojishi() {
+			var starttime = $(".createEmailCode").html();
+			if (starttime == 0) {
+				$(".createEmailCode").attr('disabled', false);
+				$(".createEmailCode").css("background-color", "lightseagreen");
+				$(".createEmailCode").html("发送验证码");
+				return;
+			}
+			setTimeout("daojishi()", 1000);
+			starttime--;
+			$(".createEmailCode").html(starttime);
+			$(".createEmailCode").css("background-color", "grey");
+		}
+	</script>
+</body>
+
+</html>
