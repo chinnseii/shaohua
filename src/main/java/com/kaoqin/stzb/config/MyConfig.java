@@ -1,8 +1,8 @@
 /*
  * @Date: 2021-07-15 16:24:23
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-09-13 17:31:31
- * @FilePath: \notec:\Users\BP-chenshengwei\Desktop\prc\stzb\src\main\java\com\kaoqin\stzb\config\MyConfig.java
+ * @LastEditTime: 2021-10-12 15:14:34
+ * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\config\MyConfig.java
  */
 package com.kaoqin.stzb.config;
 
@@ -29,7 +29,7 @@ public class MyConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authenticationInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(authenticationInterceptor()).addPathPatterns("/**")
+        .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/doc.html/**");
     }
-
 }

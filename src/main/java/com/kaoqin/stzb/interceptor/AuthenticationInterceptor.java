@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-27 16:57:06
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-09-29 17:24:02
+ * @LastEditTime: 2021-10-12 16:34:04
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\interceptor\AuthenticationInterceptor.java
  */
 package com.kaoqin.stzb.interceptor;
@@ -19,19 +19,14 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import lombok.extern.slf4j.Slf4j;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 
 @Component
 @Slf4j
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private Constant constant;
     @Autowired
     private RedisUtil redisUtil;
 
@@ -42,11 +37,11 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         if (!(object instanceof HandlerMethod)) {
             return true;
         }
-        String userAddrCount = httpServletRequest.getRemoteAddr() + "_RequestCount";
+        String userAddrCount = httpServletRequest.getRemoteAddr() + "_Request";
         // 每分钟请求超过100次服务器,拒绝服务
         if (redisUtil.hasKey(userAddrCount)) {
             if (Integer.valueOf(redisUtil.get(userAddrCount).toString()) > 100) {
-                log.warn("频繁请求IP:" + httpServletRequest.getRemoteAddr());
+                log.warn("请求频繁: {}",httpServletRequest.getRemoteAddr());
                 return false;
             }
             redisUtil.incr(userAddrCount, 1);
@@ -74,17 +69,17 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 // 执行认证
                 if (token.equals("")) {
                     httpServletResponse.sendError(401);
-                    log.info("身份认证信息不存在:" + " IP:" + httpServletRequest.getRemoteAddr());
+                    log.info("IP: {} 身份认证信息不存在", httpServletRequest.getRemoteAddr());
                     return false;
                 }
                 if(!redisUtil.hasKey(email)){
                     httpServletResponse.sendError(402);
-                    log.info("身份认证信息已过期:" + " IP:" + httpServletRequest.getRemoteAddr());
+                    log.info("IP: {} 身份认证信息已过期:",httpServletRequest.getRemoteAddr());
                     return false;
                 }
                 if (!TokenUtil.checkToken(token,String.valueOf(redisUtil.get(email)), email)) {
                     httpServletResponse.sendError(403);
-                    log.info("用户:" + email + " 令牌解析失败 IP:" + httpServletRequest.getRemoteAddr());
+                    log.info("用户: {} IP: {},token解析失败 ",email,httpServletRequest.getRemoteAddr());
                     return false;
                 }
             }

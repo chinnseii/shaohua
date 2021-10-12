@@ -7,10 +7,10 @@
 $(function () {
     //获取已创建的科目，生成选择框
     var jsonObject = new Object();
-    jsonObject.email = localStorage.getItem("email");
+    jsonObject.email = sessionStorage.getItem("email");
     var jsonData = JSON.stringify(jsonObject);
     var optionlist = javaService("/getCategoryName", jsonData);
-    localStorage.setItem("jsonData", JSON.stringify(optionlist));
+    sessionStorage.setItem("jsonData", JSON.stringify(optionlist));
     if (JSON.stringify(optionlist) !== '{}') {
         for (var temp in optionlist) {
             $("#subjectsList").append("<option>" + optionlist[temp] + "</option>");
@@ -65,7 +65,7 @@ function reset() {
 
 function uploadNote() {
     var jsonObject = new Object();
-    jsonObject.email = localStorage.getItem("email");
+    jsonObject.email = sessionStorage.getItem("email");
     jsonObject.subjects = $("#subjectsList option:selected").text();
     if($("#status option:selected").text()=="公開"){
         jsonObject.status = "0";
@@ -91,8 +91,8 @@ function uploadNote() {
  */
  function javaService(url, jsonData) {
     var headerObject = new Object();
-    headerObject.token = localStorage.getItem("token");
-    headerObject.email = localStorage.getItem("email");
+    headerObject.token = sessionStorage.getItem("token");
+    headerObject.email = sessionStorage.getItem("email");
     var headerInfo = JSON.stringify(headerObject);
     var res;
     $.ajax({

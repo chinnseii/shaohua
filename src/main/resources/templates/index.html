@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-13 17:42:23
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-09-29 10:18:42
+ * @LastEditTime: 2021-10-12 20:47:23
  * @FilePath: \stzb\src\main\resources\templates\index.html
 -->
 <!DOCTYPE html>
@@ -51,17 +51,12 @@
     integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
     crossorigin="anonymous"></script>
 <script src="/libs/Layx/layx.min.js"></script>
+<script src="/js/ajax.js"></script>
 <script src="/js/index.js"></script>
 <script src="/js/errorCode.js"></script>
 <script>
     $(function () {
-        if ("[[${token}]]".length != 0) {
-            localStorage.setItem("token", "[[${token}]]");
-        }
-        if ("[[${email}]]".length != 0) {
-            localStorage.setItem("email", "[[${email}]]");
-        }
-        if (localStorage.getItem("token") == undefined || localStorage.getItem("email") == undefined) {
+        if (sessionStorage.getItem("token") == undefined || sessionStorage.getItem("email") == undefined) {
             window.location.href = "login";
         } else {
             initIndex();

@@ -81,7 +81,7 @@
 			}
 		});
 	</script>
-	<script th:inline="javascript">
+	<script>
 		$(function () {
 			$("#emailcheck").hide();
 			$(".createEmailCode").hide();
@@ -211,7 +211,7 @@
 			daojishi();
 			$.ajax({
 				type: "POST",
-				url: "/emailCode",
+				url: "/user/register/email",
 				async: true,
 				data: {
 					'email': $("#email").val()

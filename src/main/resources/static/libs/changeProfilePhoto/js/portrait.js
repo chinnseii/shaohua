@@ -161,11 +161,11 @@ function imgToSize(size) {
 
 function submitAvatar() {
     var headerObject = new Object();
-    headerObject.token = localStorage.getItem("token");
-    headerObject.email = localStorage.getItem("email");
+    headerObject.token = sessionStorage.getItem("token");
+    headerObject.email = sessionStorage.getItem("email");
     var headerInfo = JSON.stringify(headerObject);
     var formData = new FormData($("#cropForm")[0]);  //创建一个forData 
-    formData.append('email', localStorage.getItem("email"));
+    formData.append('email', sessionStorage.getItem("email"));
     $.ajax({
         type: "POST",
         url: "/updateProfilePhoto",

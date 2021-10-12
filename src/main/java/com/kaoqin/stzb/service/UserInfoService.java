@@ -1,11 +1,12 @@
 /*
  * @Date: 2021-07-21 10:51:04
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-09-29 18:47:38
+ * @LastEditTime: 2021-10-12 20:22:32
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\UserInfoService.java
  */
 package com.kaoqin.stzb.service;
 
+import com.kaoqin.stzb.entity.CallResultMsg;
 import com.kaoqin.stzb.entity.UserInfo;
 
 import org.springframework.boot.configurationprocessor.json.JSONException;
@@ -43,11 +44,11 @@ public interface UserInfoService {
     int updateUserNote(String email,Boolean a,int b);
 
         /**
-     * @description: ユーザー科目数量更新
+     * @description: 更新同盟信息
      * @param {UserInfo} userInfo
      * @return {*}
      */
-    int updateUserAllianceId(String email,int id,String name);
+    CallResultMsg updateUserAllianceId(String email,int id,String name);
 
     /**
      * @description: ユーザーアバター更新

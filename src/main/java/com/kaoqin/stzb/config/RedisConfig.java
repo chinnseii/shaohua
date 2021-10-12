@@ -1,8 +1,8 @@
 /*
  * @Date: 2021-09-15 14:19:21
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-09-15 17:31:07
- * @FilePath: \notec:\Users\BP-chenshengwei\Desktop\prc\stzb\src\main\java\com\kaoqin\stzb\config\RedisConfig.java
+ * @LastEditTime: 2021-10-11 18:16:38
+ * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\config\RedisConfig.java
  */
 package com.kaoqin.stzb.config;
 

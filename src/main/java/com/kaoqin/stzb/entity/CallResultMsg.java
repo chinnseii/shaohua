@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-05 15:25:34
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-07 16:16:26
+ * @LastEditTime: 2021-10-12 17:10:36
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\entity\CallResultMsg.java
  */
 package com.kaoqin.stzb.entity;
@@ -10,6 +10,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.kaoqin.stzb.exception.CodeAndMsg;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -19,11 +21,15 @@ import lombok.Data;
  * @return {*}
  */
 @Data
-
+@ApiModel("api通用返回数据")
 public class CallResultMsg<T> {
+    @ApiModelProperty("api结果")
     private boolean result;
+    @ApiModelProperty("标识码")
     private int code;
+    @ApiModelProperty("错误信息")
     private String message;
+    @ApiModelProperty("返回数据")
     private T data;
 
     public CallResultMsg(CodeAndMsg codeAndMsg) {

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-21 10:53:11
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-09-30 09:56:48
+ * @LastEditTime: 2021-10-12 20:25:35
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\UserInfoServiceImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -17,8 +17,10 @@ import javax.imageio.ImageIO;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.kaoqin.stzb.dao.UserInfoMapper;
+import com.kaoqin.stzb.entity.CallResultMsg;
 import com.kaoqin.stzb.entity.Constant;
 import com.kaoqin.stzb.entity.UserInfo;
+import com.kaoqin.stzb.exception.CodeAndMsg;
 import com.kaoqin.stzb.service.UserInfoService;
 import com.kaoqin.stzb.utils.StringUtil;
 
@@ -66,11 +68,16 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public int updateUserAllianceId(String email,int AllianceId,String name) {
+    public CallResultMsg updateUserAllianceId(String email,int AllianceId,String name) {
         UserInfo userInfo=userInfoMapper.selectById(email);
         userInfo.setAlliance_id(AllianceId);
-        userInfo.setAlliance_name(name);;
-        return userInfoMapper.updateById(userInfo);
+        userInfo.setAlliance_name(name);
+        userInfo.setJurisdiction(0);
+        if(userInfoMapper.updateById(userInfo)==1){
+            return new CallResultMsg<>(); 
+        }
+        return  new CallResultMsg<>(CodeAndMsg.USERINFOUPDATEFAIL);
+
     }
 
     @Override

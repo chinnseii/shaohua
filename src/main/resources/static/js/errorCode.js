@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-08 10:57:05
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-09-29 17:55:40
+ * @LastEditTime: 2021-10-12 17:57:58
  * @FilePath: \stzb\src\main\resources\static\js\errorCode.js
  */
 // 400   （错误请求） 服务器不理解请求的语法。
@@ -85,10 +85,9 @@ function errorCode(code) {
             layx.msg('506:一分钟内只能发送一条邮件', { dialogIcon: 'error' });
             break;
         default:
-            layx.msg('予想外のエラーが発生しました。', { dialogIcon: 'error' });
+            layx.msg('未知异常，请重试', { dialogIcon: 'error' });
             setTimeout(function () {
-                window.location.href = "login";
+                window.location.href = "error";
             }, 3000);
-
     }
 }

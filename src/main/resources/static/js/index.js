@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-23 14:31:01
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-09-29 18:44:29
+ * @LastEditTime: 2021-10-12 21:22:32
  * @FilePath: \stzb\src\main\resources\static\js\index.js
  */
 /**
@@ -13,20 +13,50 @@
         var name = $("#allianceName").val();
         if (name.length == 0) {
             layx.msg('请输入同盟名称', { dialogIcon: 'warn' });
+            return;
         }
-        // if(name.length >10){
-        //     layx.msg('同盟名称过长', { dialogIcon: 'warn' });
-        // }
+        var introduce = $("#introduce").val();
+        if (introduce.length > 50) {
+            layx.msg('你可以不写但是不能写多', { dialogIcon: 'warn' });
+            return;
+        }
         var jsonData = new Object();
         jsonData.name = name;
-        jsonData.email = localStorage.getItem("email");
-        var result = javaService("/createAlliance", JSON.stringify(jsonData)); 
+        jsonData.introduce=introduce;
+        jsonData.email = sessionStorage.getItem("email");
+        var result = tokenService("/alliance", "POST", true, JSON.stringify(jsonData)); 
+        if(result.result){
+            window.location.href = "index";   
+        }
     });
+    
+
+    /**
+ * @description: 
+ * @param {*}
+ * @return {*}
+ */
+function createAlliance() {
+    $("#createAlliance").html("");
+    var innerHtml = "";
+    innerHtml += "<div class='form-inline'>";
+    innerHtml += "<div class='form - group'>";
+    innerHtml += "<label for='exampleInputName2'><h4>同盟名称:　</h4></label>";
+    innerHtml += "<input type='text' class='form - control' id='allianceName' placeholder='长度不能超过10'>";
+    innerHtml += "</div>";
+    innerHtml += "<div class='form - group'>";
+    innerHtml += "<label for='exampleInputName2'><h4>同盟介绍:　</h4></label>";
+    innerHtml += "<textarea class='form-control' id='introduce' rows='3' placeholder='50个字以内，别写多了'></textarea>";
+    innerHtml += "</div>";
+    innerHtml += "<button class='btn btn-default' id='create'>创建</button>";
+    innerHtml += "</div>";
+    $("#createAlliance").append(innerHtml);
+}
 
 function initIndex() {
     var headerObject = new Object();
-    headerObject.token = localStorage.getItem("token");
-    headerObject.email = localStorage.getItem("email");
+    headerObject.token = sessionStorage.getItem("token");
+    headerObject.email = sessionStorage.getItem("email");
     var headerInfo = JSON.stringify(headerObject);
     $.ajax({
         type: "POST",
@@ -36,7 +66,7 @@ function initIndex() {
             request.setRequestHeader("header", headerInfo);
         },
         data: {
-            'email': localStorage.getItem("email"),
+            'email': sessionStorage.getItem("email"),
         },
         success: function (res) {
             var result;
@@ -50,8 +80,8 @@ function initIndex() {
             } else {
                 $("title").html(result.nick_name)
                 $("#signature").val(result.signature);
-                localStorage.setItem("avatar_path", "profilephoto/" + result.avatar_path);
-                $(".profilephoto").attr("src", localStorage.getItem("avatar_path"));
+                sessionStorage.setItem("avatar_path", "profilephoto/" + result.avatar_path);
+                $(".profilephoto").attr("src", sessionStorage.getItem("avatar_path"));
                 $("#myAlliance").css({ "background-color": "aliceblue" });
                 if (result.alliance_id == undefined || result.alliance_id == null || result.alliance_id == "") {
                     var innerHtml = "";
@@ -91,8 +121,8 @@ $("#changeProfilePhoto").click(function () {
  */
 function createCategory(value, a) {
     var headerObject = new Object();
-    headerObject.token = localStorage.getItem("token");
-    headerObject.email = localStorage.getItem("email");
+    headerObject.token = sessionStorage.getItem("token");
+    headerObject.email = sessionStorage.getItem("email");
     var headerInfo = JSON.stringify(headerObject);
     $.ajax({
         type: "POST",
@@ -101,7 +131,7 @@ function createCategory(value, a) {
             request.setRequestHeader("header", headerInfo);
         },
         data: {
-            'email': localStorage.getItem("email"),
+            'email': sessionStorage.getItem("email"),
             'categoryName': value,
             'status': a
         },
@@ -128,7 +158,7 @@ function loginOut() {
             {
                 label: 'YSE',
                 callback: function (id, button, event) {
-                    localStorage.clear();
+                    sessionStorage.clear();
                     window.location.href = "login";
                 }
             },
@@ -141,79 +171,7 @@ function loginOut() {
         ]
     });
 }
-/**
- * @description: 
- * @param {*}
- * @return {*}
- */
-function createAlliance() {
-    $("#createAlliance").html("");
-    var innerHtml = "";
-    innerHtml += "<div class='form-inline'>";
-    innerHtml += "<div class='form - group'>";
-    innerHtml += "<label for='exampleInputName2'><h4>同盟名称:　</h4></label>";
-    innerHtml += "<input type='text' class='form - control' id='allianceName' placeholder='长度不能超过10'>";
-    innerHtml += "</div>";
-    innerHtml += "<button class='btn btn-default' id='create'>创建</button>";
-    innerHtml += "</div>";
-    $("#createAlliance").append(innerHtml);
-}
 
-
-
-function create() {
-    var name = $("#createAlliance #allianceName").val();
-    if (name.length == 0) {
-        layx.msg('请输入同盟名称', { dialogIcon: 'warn' });
-    }
-    var headerObject = new Object();
-    headerObject.name = localStorage.getItem("token");
-    headerObject.email = localStorage.getItem("email");
-    var result = javaService("/createAlliance", jsonData);
-}
-/**
- * @description: 选择笔记的作者
- * @param {*}
- * @return {*}
- */
-$("#authorUl li").click(function () {
-    $("#subjectUl").empty();
-    $("#subject").text("ノート科目");
-    var v = $(this).text();
-    $("#author").text(v);
-    if (v == '自分') {
-        var jsonObject = new Object();
-        jsonObject.email = localStorage.getItem("email");
-        var jsonData = JSON.stringify(jsonObject);
-        var json = javaService("/getCategoryName", jsonData);
-        localStorage.setItem("jsonData", JSON.stringify(json));
-        if (JSON.stringify(json) !== '{}') {
-            for (var subject in json) {
-                $("#subjectUl").append("<li><a href='#'>" + json[subject] + "</a></li>");
-            }
-        }
-    } else {
-        $("#subjectUl").append("<li>科目名：<input type='text' id='newSubject' placeholder='入力してください。'</li >");
-    }
-})
-$('#subjectUl').on('click', 'li', function () {
-    var v = $(this).text();
-    $("#subject").text(v);
-})
-$('#subjectUl').on('blur', '#newSubject', function () {
-    var input = $('#subjectUl #newSubject').val();
-    if (input == '') {
-        layx.msg('科目名を入力してください。', { dialogIcon: 'warn' });
-    } else {
-        $("#subject").text(input);
-    }
-})
-$("#subject").click(function () {
-    var author = $("#author").text();
-    if (author == 'ノート作成者') {
-        layx.msg('ノート作成者を選んでください。', { dialogIcon: 'warn' });
-    }
-})
 
 /**
  * @description: 调用java服务(同步)
@@ -223,8 +181,8 @@ $("#subject").click(function () {
  */
 function javaService(url, jsonData) {
     var headerObject = new Object();
-    headerObject.token = localStorage.getItem("token");
-    headerObject.email = localStorage.getItem("email");
+    headerObject.token = sessionStorage.getItem("token");
+    headerObject.email = sessionStorage.getItem("email");
     var headerInfo = JSON.stringify(headerObject);
     var res;
     $.ajax({
@@ -273,9 +231,9 @@ function createNote() {
  * @return {*}
  */
 function getNote(page, status) {
-    localStorage.setItem("pageNo", page);
+    sessionStorage.setItem("pageNo", page);
     var getNoteObject = new Object();
-    getNoteObject.email = localStorage.getItem("email");
+    getNoteObject.email = sessionStorage.getItem("email");
     getNoteObject.status = status;
     getNoteObject.page = page;
     var jsonGetNote = JSON.stringify(getNoteObject);
@@ -335,7 +293,7 @@ function noteView(page, res, status) {
     } else {
         allPage = count / 3;
     }
-    localStorage.setItem("allPage", allPage);
+    sessionStorage.setItem("allPage", allPage);
     var endPage;
     var startPage;
     //最多显示七页
@@ -356,7 +314,7 @@ function noteView(page, res, status) {
         startPage = Number(allPage) - 6;
     }
     for (var i = startPage; i < endPage; i++) {
-        if (i == localStorage.getItem("pageNo")) {
+        if (i == sessionStorage.getItem("pageNo")) {
             innerHtml += "<li><a href='#' style='pointer-events: none;background-color:#D3D3D3'>" + parseInt(i + 1) + "</a></li>";
         } else {
             innerHtml += "<li><a href='#' onclick='getNote(" + i + "," + status + ")'>" + parseInt(i + 1) + "</a></li>";
@@ -379,8 +337,8 @@ function noteView(page, res, status) {
  * @return {*}
  */
 function getNextPage(status) {
-    var pageNo = localStorage.getItem("pageNo");
-    var allPage = localStorage.getItem("allPage");
+    var pageNo = sessionStorage.getItem("pageNo");
+    var allPage = sessionStorage.getItem("allPage");
     var newPage = Number(pageNo) + 1;
     if (newPage >= allPage) {
         getNote(pageNo, status);
@@ -396,7 +354,7 @@ function getNextPage(status) {
  * @return {*}
  */
 function getPrePage(status) {
-    var pageNo = localStorage.getItem("pageNo");
+    var pageNo = sessionStorage.getItem("pageNo");
     if (pageNo == 0) {
         getNote(parseInt(pageNo), status);
     } else {
@@ -423,7 +381,7 @@ function deleteNote(noteId) {
     layx.confirm('WARN', 'このノートを削除しますか', function (id) {
         var jsonObject = new Object();
         jsonObject.id = noteId;
-        jsonObject.email = localStorage.getItem("email");
+        jsonObject.email = sessionStorage.getItem("email");
         var jsonData = JSON.stringify(jsonObject);
         var json = javaService("/deleteNote", jsonData);
         if (json.result) {
@@ -441,7 +399,7 @@ function deleteNote(noteId) {
  * @return {*}
  */
 function editNote(noteId) {
-    localStorage.setItem("editNoteId", noteId);
+    sessionStorage.setItem("editNoteId", noteId);
     layx.iframe('shadow-color', 'ノート作成', 'editNote', {
         shadable: 0.8
     });
@@ -483,10 +441,10 @@ $("#createCategory").click(function () {
 });
 $("#signature").blur(function () {
     var headerObject = new Object();
-    headerObject.token = localStorage.getItem("token");
-    headerObject.email = localStorage.getItem("email");
+    headerObject.token = sessionStorage.getItem("token");
+    headerObject.email = sessionStorage.getItem("email");
     var headerInfo = JSON.stringify(headerObject);
-    if (localStorage.getItem("signature") != $("#signature").val()) {
+    if (sessionStorage.getItem("signature") != $("#signature").val()) {
         $.ajax({
             type: "POST",
             url: "/updateUserSignature",
@@ -494,7 +452,7 @@ $("#signature").blur(function () {
                 request.setRequestHeader("header", headerInfo);
             },
             data: {
-                'email': localStorage.getItem("email"),
+                'email': sessionStorage.getItem("email"),
                 'signature': $("#signature").val()
             },
             success: function (res) {
@@ -510,7 +468,7 @@ $("#signature").blur(function () {
                 if (!result.res) {
                     layx.msg('個人説明更新失敗しました、も一度更新してください。', { dialogIcon: 'error' });
                 } else {
-                    localStorage.setItem("signature", $("#signature").val());
+                    sessionStorage.setItem("signature", $("#signature").val());
                     layx.alert('個人説明更新', '個人説明更新成功', null, { dialogIcon: 'success' });
                 }
             },
