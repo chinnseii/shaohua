@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-07 10:08:39
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-12 19:31:41
+ * @LastEditTime: 2021-10-13 19:53:59
  * @FilePath: \stzb\src\main\resources\static\js\ajax.js
  */
 /**
@@ -36,7 +36,7 @@ function tokenService(url, type, async, jsonData) {
                 res = returnValue;
             }
             if (res.errorCode != undefined) {
-                errorCode(res.errorCode);
+                errorMsg(res.errorCode, res.message);
             }
         },
         error: function (error) {
@@ -64,47 +64,52 @@ function noTokenService(url, type, async, jsonData) {
         contentType: "application/json; charset=utf-8",
         data: jsonData,
         success: function (returnValue) {
-            if (returnValue == "") {
-                returnValue = "{}";
-            }
-            if (typeof returnValue == "string") {
-                res = JSON.parse(returnValue);
-            } else {
-                res = returnValue;
-            }
+            res = toObject(returnValue);
             if (res.errorCode != undefined) {
                 errorMsg(res.errorCode, res.message);
             }
         },
         error: function (error) {
-            errorMsg(error.status);
+            errorCode(error.status);
         }
     });
     return res;
 }
 
 function errorMsg(code, msg) {
-        //身份认证失败
-    var codeList1=new Array(404,402);
-    for(var a in codeList1){
-       if(a==code){
-        layx.msg(code + ':' + msg, { dialogIcon: 'error' });
-        setTimeout(function () {
-            window.location.href = "login";
-        }, 3000);
-       } 
+    //身份认证失败
+    var codeList1 = new Array(404, 402);
+    for (var a in codeList1) {
+        if (codeList1[a] == code) {
+            layx.msg(code + ':' + msg, { dialogIcon: 'error' });
+            setTimeout(function () {
+                window.location.href = "login";
+            }, 3000);
+        }
     }
     //警告
-    var codeList2=new Array(507,508,509,510,511,512,513,514,515,516);
-    for(var a in codeList2){
-       if(a==code){
-        layx.msg(code + ':' + msg, { dialogIcon: 'warn' });
-        return;
-       } 
+    var codeList2 = new Array(507, 508, 509, 510, 511, 512, 513, 514, 515, 516);
+    for (var a in codeList2) {
+        if (codeList2[a] == code) {
+            setTimeout(function () {
+                layx.msg(code + ':' + msg, { dialogIcon: 'warn' });
+            }, 3000);
+        }
     }
-    window.location.href = "error";
 }
 
+function toObject(returnValue) {
+    var res;
+    if (returnValue == "") {
+        returnValue = "{}";
+    }
+    if (typeof returnValue == "string") {
+        res = JSON.parse(returnValue);
+    } else {
+        res = returnValue;
+    }
+    return res;
+}
 
 
 

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-06 17:41:36
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-12 20:35:46
+ * @LastEditTime: 2021-10-13 21:53:31
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\exception\CodeAndMsg.java
  */
 package com.kaoqin.stzb.exception;
@@ -18,17 +18,12 @@ public enum CodeAndMsg {
     MAILEMPTY(508, "请输入邮箱"),
     NOIDORNOPSD(509, "未输入用户名或者密码"),
     MAILCHECKFAIL(510, "验证码超时或不正确"),
-    INITFAIL(511, "账号初始化失败"),
-    MAILEXIST(512, "邮箱已经注册"),
+    INITFAIL(511, "用户信息初始化失败"),
+    MAILEXIST(512, "邮箱已被注册"),
     NOREGISTER(513,"账号不存在或密码不正确"),
     ACCOUNTFREEZE(514,"账号已冻结，请3小时候重试"),
     MAILSENDFAIL(515,"邮件发送异常"),
     CREATAPPFAIL(516,"服务器异常，申请失败，请稍后重试"),
-    
-
-
-
-
     UN(1000,"");
 
 
