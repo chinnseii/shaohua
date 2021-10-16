@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-15 16:24:24
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-09-22 16:38:32
+ * @LastEditTime: 2021-10-14 14:23:27
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\UserServiceImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -12,7 +12,6 @@ import com.kaoqin.stzb.dao.UserMapper;
 import com.kaoqin.stzb.entity.User;
 import com.kaoqin.stzb.service.UserService;
 import com.kaoqin.stzb.utils.MD5Util;
-import com.kaoqin.stzb.utils.StringUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

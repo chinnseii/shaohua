@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-21 10:51:04
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-12 20:22:32
+ * @LastEditTime: 2021-10-14 10:37:31
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\UserInfoService.java
  */
 package com.kaoqin.stzb.service;
@@ -30,18 +30,12 @@ public interface UserInfoService {
     UserInfo getUserInfo(String email);
 
     /**
-     * @description: ユーザー説明更新
+     * @description: 更新用户签名
      * @param {UserInfo} userInfo
      * @return {*}
      */
-    int updateUserSignature(UserInfo userInfo);
+    CallResultMsg<UserInfo> updateUserSignature(UserInfo userInfo);
 
-    /**
-     * @description: ユーザーノート数量更新
-     * @param {UserInfo} userInfo
-     * @return {*}
-     */
-    int updateUserNote(String email,Boolean a,int b);
 
         /**
      * @description: 更新同盟信息

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-27 16:57:06
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-12 16:34:04
+ * @LastEditTime: 2021-10-14 10:25:05
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\interceptor\AuthenticationInterceptor.java
  */
 package com.kaoqin.stzb.interceptor;
@@ -12,6 +12,7 @@ import com.kaoqin.stzb.entity.*;
 import com.kaoqin.stzb.utils.RedisUtil;
 import com.kaoqin.stzb.utils.TokenUtil;
 
+import org.springframework.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Component;
@@ -41,7 +42,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         // 每分钟请求超过100次服务器,拒绝服务
         if (redisUtil.hasKey(userAddrCount)) {
             if (Integer.valueOf(redisUtil.get(userAddrCount).toString()) > 100) {
-                log.warn("请求频繁: {}",httpServletRequest.getRemoteAddr());
+                log.warn("请求频繁: {}", httpServletRequest.getRemoteAddr());
                 return false;
             }
             redisUtil.incr(userAddrCount, 1);
@@ -63,23 +64,41 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             if (userLoginToken.required()) {
                 String header = httpServletRequest.getHeader("header");// 从 http 请求头中取出
                 // 获取 token 中的 user id
-                JSONObject jsonObject = new JSONObject(header);
-                String token = jsonObject.getString("token");
-                String email = jsonObject.getString("email");
+                if (!StringUtils.hasLength(header)) {
+                    log.info("IP: {} ,请求 : {} 身份认证信息不存在", httpServletRequest.getRemoteAddr(),
+                            httpServletRequest.getRequestURI());
+                    httpServletResponse.sendError(401, "身份认证信息不存在");
+                    return false;
+                }
+                String token = "";
+                String email = "";
+                try {
+                    JSONObject jsonObject = new JSONObject(header);
+                    token = jsonObject.getString("token");
+                    email = jsonObject.getString("email");
+                } catch (Exception e) {
+                    httpServletResponse.sendError(401, "身份认证信息不存在");
+                    log.info("IP: {} ,请求 : {} 身份认证信息错误", httpServletRequest.getRemoteAddr(),
+                            httpServletRequest.getRequestURI());
+                    return false;
+                }
                 // 执行认证
                 if (token.equals("")) {
                     httpServletResponse.sendError(401);
-                    log.info("IP: {} 身份认证信息不存在", httpServletRequest.getRemoteAddr());
+                    log.info("IP: {} ,请求 : {} 身份认证信息不存在", httpServletRequest.getRemoteAddr(),
+                            httpServletRequest.getRequestURI());
                     return false;
                 }
-                if(!redisUtil.hasKey(email)){
-                    httpServletResponse.sendError(402);
-                    log.info("IP: {} 身份认证信息已过期:",httpServletRequest.getRemoteAddr());
+                if (!redisUtil.hasKey(email)) {
+                    httpServletResponse.sendError(402, "身份认证信息已过期");
+                    log.info("IP: {} ,请求 : {} 身份认证信息已过期:", httpServletRequest.getRemoteAddr(),
+                            httpServletRequest.getRequestURI());
                     return false;
                 }
-                if (!TokenUtil.checkToken(token,String.valueOf(redisUtil.get(email)), email)) {
-                    httpServletResponse.sendError(403);
-                    log.info("用户: {} IP: {},token解析失败 ",email,httpServletRequest.getRemoteAddr());
+                if (!TokenUtil.checkToken(token, String.valueOf(redisUtil.get(email)), email)) {
+                    httpServletResponse.sendError(403, "token解析失败");
+                    log.info("用户: {} IP: {},token解析失败 ", email, httpServletRequest.getRemoteAddr(),
+                            httpServletRequest.getRequestURI());
                     return false;
                 }
             }

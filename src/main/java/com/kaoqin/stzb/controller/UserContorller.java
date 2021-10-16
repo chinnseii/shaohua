@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-15 16:24:23
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-13 21:43:51
+ * @LastEditTime: 2021-10-14 13:25:41
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\controller\UserContorller.java
  */
 package com.kaoqin.stzb.controller;
@@ -25,16 +25,12 @@ import com.kaoqin.stzb.utils.StringUtil;
 import com.kaoqin.stzb.utils.TokenUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
@@ -154,7 +150,6 @@ public class UserContorller {
         if (user == null) {
             log.warn("用户:" + email + "密码不正确");
             userService.updateLockFlg(email, 1);
-            log.warn("用户: {} 账号或密码为空",email);
             return res.fail(CodeAndMsg.NOIDORNOPSD);
         } else {
             if (user.getLock_flg() != 0) {

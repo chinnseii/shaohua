@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-21 10:53:11
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-12 20:25:35
+ * @LastEditTime: 2021-10-14 13:17:05
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\UserInfoServiceImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -41,7 +41,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     private Constant constant;
 
     @Override
-    public int initUserInfo(String nickName,String email) {
+    public int initUserInfo(String nickName, String email) {
         UserInfo userInfo = new UserInfo();
         userInfo.setEmail(email);
         userInfo.setAvatar_path(constant.getINIT_AVATAR_NAME());
@@ -51,32 +51,30 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public UserInfo getUserInfo(String email) {
-        QueryWrapper<UserInfo> queryWrapper=new QueryWrapper<>();
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("email", email);
         return userInfoMapper.selectOne(queryWrapper);
     }
 
     @Override
-    public int updateUserSignature(UserInfo userInfo) {
-        return userInfoMapper.updateById(userInfo);
+    public CallResultMsg<UserInfo> updateUserSignature(UserInfo userInfo) {
+        if (userInfoMapper.updateById(userInfo) == 1) {
+            return new CallResultMsg<>(userInfoMapper.selectById(userInfo.getEmail()));
+        }
+        return new CallResultMsg<>(CodeAndMsg.UPDATEUSERINFOFAIL);
+
     }
 
     @Override
-    public int updateUserNote(String email,Boolean a,int b) {
-        UserInfo userInfo=userInfoMapper.selectById(email);
-        return userInfoMapper.updateById(userInfo);
-    }
-
-    @Override
-    public CallResultMsg updateUserAllianceId(String email,int AllianceId,String name) {
-        UserInfo userInfo=userInfoMapper.selectById(email);
+    public CallResultMsg updateUserAllianceId(String email, int AllianceId, String name) {
+        UserInfo userInfo = userInfoMapper.selectById(email);
         userInfo.setAlliance_id(AllianceId);
         userInfo.setAlliance_name(name);
         userInfo.setJurisdiction(0);
-        if(userInfoMapper.updateById(userInfo)==1){
-            return new CallResultMsg<>(); 
+        if (userInfoMapper.updateById(userInfo) == 1) {
+            return new CallResultMsg<>();
         }
-        return  new CallResultMsg<>(CodeAndMsg.USERINFOUPDATEFAIL);
+        return new CallResultMsg<>(CodeAndMsg.USERINFOUPDATEFAIL);
 
     }
 
@@ -149,10 +147,10 @@ public class UserInfoServiceImpl implements UserInfoService {
             res.put("errorCode", 509);
             return res;
         }
-        log.info("用户:" + userInfo.getEmail() + " 头像上传成功，开始更新数据库");
+        log.info("用户: {}  头像上传成功，开始更新数据库",userInfo.getEmail());
         userInfo.setAvatar_path(avatarNewPath.replace(constant.getAVATAR_PATH(), ""));
         if (userInfoMapper.updateById(userInfo) != 1) {
-            log.error("用户: " + userInfo.getEmail() + " 数据库头像信息更新失败");
+            log.error("用户: {}  数据库头像信息更新失败",userInfo.getEmail());
             res.put("errorCode", 509);
         }
         log.info("用户:" + userInfo.getEmail() + " 数据库头像信息更新成功");

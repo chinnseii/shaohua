@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-23 14:31:01
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-12 21:22:32
+ * @LastEditTime: 2021-10-16 16:51:27
  * @FilePath: \stzb\src\main\resources\static\js\index.js
  */
 /**
@@ -9,35 +9,84 @@
  * @param {*}
  * @return {*}
  */
-    $("#allianceView").on("click","#create",()=>{
-        var name = $("#allianceName").val();
-        if (name.length == 0) {
-            layx.msg('请输入同盟名称', { dialogIcon: 'warn' });
-            return;
+function initIndex() {
+    var result = tokenService("/userInfo", "GET", false, { 'email': sessionStorage.getItem("email") });
+    if (result.result) {
+        var userInfo = JSON.parse(result.data);
+        $("title").html(userInfo.nick_name)
+        $("#signature").val(userInfo.signature);
+        sessionStorage.setItem("avatar_path", "profilephoto/" + userInfo.avatar_path);
+        $(".profilephoto").attr("src", sessionStorage.getItem("avatar_path"));
+        $("#myAlliance").css({ "background-color": "aliceblue" });
+        $("#allianceView").css("background-color", "aliceblue");
+        var innerHtml = "";
+        innerHtml += "<div class='jumbotron'>";
+        $("#allianceView").css("background-color", "aliceblue");
+        if (userInfo.alliance_id == undefined || userInfo.alliance_id == null || userInfo.alliance_id == "") {
+            innerHtml += "<h3>您还没有加入任何同盟</h3>";
+            innerHtml += "<p>您可以选择创建同盟或加入同盟</p>";
+            innerHtml += "<a class='btn btn-primary btn-lg' role='button'onclick='createAlliance()'>创建同盟</a>";
+            innerHtml += "<a class='btn btn-primary btn-lg' role='button'onclick='searchAlliance()'>加入同盟</a>";
+            innerHtml += "<div id='createAlliance'></div>";
+            innerHtml += "<div id='searchAlliance'></div>";
+        } else {
+            if (userInfo.jurisdiction < 3) {
+                innerHtml += "<h4>普通成员</h4>";
+                innerHtml += " <button type='button' class='btn btn-info'>（一般信息）Info</button> ";
+                innerHtml += " <button type='button' class='btn btn-info'>（一般信息）Info</button> ";
+                innerHtml += " <button type='button' class='btn btn-info'>（一般信息）Info</button> ";
+                innerHtml += " <button type='button' class='btn btn-info'>（一般信息）Info</button> ";
+                innerHtml += " <button type='button' class='btn btn-info'>（一般信息）Info</button> ";
+                innerHtml += " <button type='button' class='btn btn-info'>（一般信息）Info</button> ";
+                innerHtml += " <button type='button' class='btn btn-info'>（一般信息）Info</button> ";
+            }
+            if (userInfo.jurisdiction < 2) {
+                innerHtml += "<h4>管理</h4>";
+                innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
+                innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
+                innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
+                innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
+                innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
+                innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
+            }
+            if (userInfo.jurisdiction < 1) {
+                innerHtml += "<h4>盟操作</h4>";
+                innerHtml += "<button type='button' class='btn btn-danger'>解散同盟</button>";
+            }
         }
-        var introduce = $("#introduce").val();
-        if (introduce.length > 50) {
-            layx.msg('你可以不写但是不能写多', { dialogIcon: 'warn' });
-            return;
-        }
-        var jsonData = new Object();
-        jsonData.name = name;
-        jsonData.introduce=introduce;
-        jsonData.email = sessionStorage.getItem("email");
-        var result = tokenService("/alliance", "POST", true, JSON.stringify(jsonData)); 
-        if(result.result){
-            window.location.href = "index";   
-        }
-    });
-    
+        innerHtml += "</div>";
+        $("#allianceView").append(innerHtml);
+    }
+}
+$("#allianceView").on("click", "#create", () => {
+    var name = $("#allianceName").val();
+    if (name.length == 0) {
+        layx.msg('请输入同盟名称', { dialogIcon: 'warn' });
+        return;
+    }
+    var introduce = $("#introduce").val();
+    if (introduce.length > 50) {
+        layx.msg('你可以不写但是不能写多', { dialogIcon: 'warn' });
+        return;
+    }
+    var jsonData = new Object();
+    jsonData.name = name;
+    jsonData.introduce = introduce;
+    jsonData.email = sessionStorage.getItem("email");
+    var result = tokenService("/alliance", "POST", true, JSON.stringify(jsonData));
+    if (result.result) {
+        window.location.href = "index";
+    }
+});
 
-    /**
- * @description: 
- * @param {*}
- * @return {*}
- */
+/**
+* @description: 
+* @param {*}
+* @return {*}
+*/
 function createAlliance() {
     $("#createAlliance").html("");
+    $("#searchAlliance").html("");
     var innerHtml = "";
     innerHtml += "<div class='form-inline'>";
     innerHtml += "<div class='form - group'>";
@@ -52,56 +101,89 @@ function createAlliance() {
     innerHtml += "</div>";
     $("#createAlliance").append(innerHtml);
 }
-
-function initIndex() {
-    var headerObject = new Object();
-    headerObject.token = sessionStorage.getItem("token");
-    headerObject.email = sessionStorage.getItem("email");
-    var headerInfo = JSON.stringify(headerObject);
-    $.ajax({
-        type: "POST",
-        url: "/getUserInfo",
-        dataType: "json",
-        beforeSend: function (request) {
-            request.setRequestHeader("header", headerInfo);
-        },
-        data: {
-            'email': sessionStorage.getItem("email"),
-        },
-        success: function (res) {
-            var result;
-            if (typeof res == "string") {
-                result = JSON.parse(res);
-            } else {
-                result = res;
-            }
-            if (result.errorCode != undefined) {
-                errorCode(result.errorCode);
-            } else {
-                $("title").html(result.nick_name)
-                $("#signature").val(result.signature);
-                sessionStorage.setItem("avatar_path", "profilephoto/" + result.avatar_path);
-                $(".profilephoto").attr("src", sessionStorage.getItem("avatar_path"));
-                $("#myAlliance").css({ "background-color": "aliceblue" });
-                if (result.alliance_id == undefined || result.alliance_id == null || result.alliance_id == "") {
-                    var innerHtml = "";
-                    innerHtml += "<div class='jumbotron'>";
-                    innerHtml += "<h3>您还没有加入任何同盟</h3>";
-                    innerHtml += "<p>您可以选择创建同盟或加入同盟</p>";
-                    innerHtml += "<a class='btn btn-primary btn-lg' role='button'onclick='createAlliance()'>创建同盟</a>";
-                    innerHtml += "<a class='btn btn-primary btn-lg' role='button'>加入同盟</a>";
-                    innerHtml += "<div id='createAlliance'></div>";
-                    innerHtml += "</div>";
-                    $("#allianceView").append(innerHtml);
-                }
-            }
-        },
-        error: function (res) {
-            errorCode(res.status);
-        }
-    });
-    // getNote("0", "0");
+function searchAlliance() {
+    $("#createAlliance").html("");
+    $("#searchAlliance").html("");
+    var innerHtml = "";
+    innerHtml += "<div class='input-group'>";
+    innerHtml += "<input type='text' id='search' class='form-control' aria-label='...'>";
+    innerHtml += "<div class='input-group-btn'>";
+    innerHtml += "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>检索 <span class='caret'></span></button>";
+    innerHtml += "<ul class='dropdown-menu dropdown-menu-right'>";
+    innerHtml += "<li><a id='idSearch'>盟ID检索</a></li>";
+    innerHtml += "<li><a id='nameSearch'>盟名检索</a></li>";
+    innerHtml += "</ul>";
+    innerHtml += "</div>";
+    innerHtml += "</div>";
+    innerHtml += "<div id='searchresult'></div>";
+    innerHtml += "</div>";
+    $("#searchAlliance").append(innerHtml);
 }
+/**
+ * @description: 根据同盟名检索同盟信息
+ * @param {*} click
+ * @param {*} nameSearch
+ * @param {*} function
+ * @return {*}
+ */
+$("#allianceView").on("click", "#idSearch", function () {
+    var search = $("#search").val();
+    if (search.length == 10 && !isNaN(search)) {
+        var res = tokenService("/alliance/search", "GET", false, { 'search': search, 'searchType': 0, 'email': sessionStorage.getItem("email") });
+        if (res.result) {
+            var innerHtml = "";
+            if(res.data==""||res.data=="{}"||res.data==null||res.data.length==0){
+                innerHtml += "<h4>未查询到相关同盟，请确认后重试</h4>";
+            }else{
+                var alliance= JSON.parse(res.data)[0];
+                innerHtml += "<div class='table-responsive'>";
+                innerHtml += "  <table class='table table-bordered'>";
+                innerHtml += "<tr>";
+                innerHtml += "  <td class='info'><h5>盟ID</h5></td>";
+                innerHtml += "  <td class='info'><h5>同盟名</h5></td>";
+                innerHtml += "  <td class='info'><h5>盟主</h5></td>";
+                innerHtml += "  <td class='info'><h5>人数</h5></td>";
+                innerHtml += "  <td class='info'><h5>盟介绍</h5></td>";
+                innerHtml += "  <td class='info'><h5>创建时间</h5></td>";
+                innerHtml += "  <td class='info'><h5>申请</h5></td>";
+                innerHtml += "</tr>";
+                innerHtml += "<tr>";
+                innerHtml += "  <td>"+alliance.alliance_Id+"</td>";
+                innerHtml += "  <td>"+alliance.name+"</td>";
+                innerHtml += "  <td>"+alliance.own_name+"</td>";
+                innerHtml += "  <td>"+alliance.population+"</td>";
+                innerHtml += "  <td>"+alliance.introduce+"</td>";
+                innerHtml += "  <td>"+alliance.create_time+"</td>";
+                innerHtml += "  <td>"+alliance.application+"</td>";
+                innerHtml += "</tr>";
+                innerHtml += "  </table>";
+                innerHtml += "</div>";
+            }
+            $("#searchresult").html("");
+            $("#searchresult").html(innerHtml);
+        }
+    } else {
+        layx.msg('请输入正确的同盟ID', { dialogIcon: 'warn' });
+    }
+});
+/**
+ * @description: 根据同盟ID检索同盟信息
+ * @param {*} click
+ * @param {*} idSearch
+ * @param {*} function
+ * @return {*}
+ */
+$("#allianceView").on("click", "#nameSearch", function () {
+    var search = $("#search").val();
+    if (search.length > 20 || search.length == 0) {
+        layx.msg('请输入正确的同盟名称', { dialogIcon: 'warn' });
+    } else {
+        var res = tokenService("/alliance/search", "GET", false, { 'search': search, 'searchType': 1, 'email': sessionStorage.getItem("email") });
+    }
+
+});
+
+
 /**
  * @description: 更新头像页面呼出
  * @param {*} function
@@ -113,40 +195,6 @@ $("#changeProfilePhoto").click(function () {
     });
     layx.setSize('shadow-color', { width: 950, height: 600 });
 });
-/**
- * @description: 创建科目
- * @param {*} value
- * @param {*} a
- * @return {*}
- */
-function createCategory(value, a) {
-    var headerObject = new Object();
-    headerObject.token = sessionStorage.getItem("token");
-    headerObject.email = sessionStorage.getItem("email");
-    var headerInfo = JSON.stringify(headerObject);
-    $.ajax({
-        type: "POST",
-        url: "/createCategory",
-        beforeSend: function (request) {
-            request.setRequestHeader("header", headerInfo);
-        },
-        data: {
-            'email': sessionStorage.getItem("email"),
-            'categoryName': value,
-            'status': a
-        },
-        success: function (result) {
-            var json = JSON.parse(result);
-            if (json.result) {
-                layx.alert('科目作成', '科目: ' + value + ' 作成成功', null, { dialogIcon: 'success' });
-            }
-        },
-        error: function (result) {
-            errorCode(result.status);
-            layx.msg('サーバー異常、科目作成失敗しました', { dialogIcon: 'error' });
-        }
-    });
-}
 /**
  * @description: 登出
  * @param {*}
@@ -170,46 +218,6 @@ function loginOut() {
             }
         ]
     });
-}
-
-
-/**
- * @description: 调用java服务(同步)
- * @param {*} url
- * @param {*} jsonData
- * @return {*}
- */
-function javaService(url, jsonData) {
-    var headerObject = new Object();
-    headerObject.token = sessionStorage.getItem("token");
-    headerObject.email = sessionStorage.getItem("email");
-    var headerInfo = JSON.stringify(headerObject);
-    var res;
-    $.ajax({
-        type: "POST",
-        url: url,
-        async: false,
-        beforeSend: function (request) {
-            request.setRequestHeader("header", headerInfo);
-        },
-        data: {
-            'jsonData': jsonData
-        },
-        success: function (returnValue) {
-            if (typeof returnValue == "string") {
-                res = JSON.parse(returnValue);
-            } else {
-                res = returnValue;
-            }
-            if (res.errorCode != undefined) {
-                errorCode(res.errorCode);
-            }
-        },
-        error: function (error) {
-            errorCode(error.status);
-        }
-    });
-    return res;
 }
 
 /**

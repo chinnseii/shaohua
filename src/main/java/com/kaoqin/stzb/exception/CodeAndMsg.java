@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-06 17:41:36
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-13 21:53:31
+ * @LastEditTime: 2021-10-16 14:08:51
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\exception\CodeAndMsg.java
  */
 package com.kaoqin.stzb.exception;
@@ -24,6 +24,9 @@ public enum CodeAndMsg {
     ACCOUNTFREEZE(514,"账号已冻结，请3小时候重试"),
     MAILSENDFAIL(515,"邮件发送异常"),
     CREATAPPFAIL(516,"服务器异常，申请失败，请稍后重试"),
+    READUSERINFOFAIL(517,"读取用户信息失败"),
+    UPDATEUSERINFOFAIL(518,"更新用户信息失败"),
+    INPUTERROR(519, "请求参数异常"),
     UN(1000,"");
 
 

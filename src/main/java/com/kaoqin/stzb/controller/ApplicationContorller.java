@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-04 14:47:30
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-12 16:16:42
+ * @LastEditTime: 2021-10-14 13:03:47
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\controller\ApplicationContorller.java
  */
 package com.kaoqin.stzb.controller;
@@ -17,9 +17,7 @@ import com.kaoqin.stzb.service.ApplicationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 

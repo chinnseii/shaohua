@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-18 17:07:02
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-12 21:15:58
+ * @LastEditTime: 2021-10-16 14:04:33
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\AllianceServiceImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -9,22 +9,27 @@ package com.kaoqin.stzb.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.kaoqin.stzb.dao.AllianceMapper;
+import com.kaoqin.stzb.dao.ApplicationMapper;
 import com.kaoqin.stzb.entity.Alliance;
+import com.kaoqin.stzb.entity.Application;
 import com.kaoqin.stzb.entity.CallResultMsg;
 import com.kaoqin.stzb.exception.CodeAndMsg;
 import com.kaoqin.stzb.service.AllianceService;
 import com.kaoqin.stzb.service.UserInfoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AllianceServiceImpl implements AllianceService {
     @Autowired
     private AllianceMapper allianceMapper;
+    @Autowired
+    private ApplicationMapper applicationMapper;
     @Autowired
     private UserInfoService userInfoService;
 
@@ -44,11 +49,11 @@ public class AllianceServiceImpl implements AllianceService {
                     alliance.getName());
             if (update.isResult()) {
                 return new CallResultMsg<>(alliance);
-            }else{
+            } else {
                 allianceMapper.deleteById(alliance.getAlliance_Id());
                 return new CallResultMsg<>(CodeAndMsg.USERINFOUPDATEFAIL);
             }
-        } 
+        }
         return new CallResultMsg<>(CodeAndMsg.CREATEALLIANCEFAIL);
     }
 
@@ -61,20 +66,46 @@ public class AllianceServiceImpl implements AllianceService {
         return null;
     }
 
+ 
     @Override
-    public JSONObject getCategoryName(String mobile) throws Exception {
-        QueryWrapper<Alliance> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("category_name").eq("email", mobile);
-        List<Alliance> nameList = allianceMapper.selectList(queryWrapper);
-        List<String> list = new ArrayList<>();
-        // if(!nameList.isEmpty()){
-        // nameList.forEach(item -> list.add(item.getCategory_name()));
-        // }
-        JSONObject jsonObject = new JSONObject();
-        int i = 0;
-        for (String name : list) {
-            jsonObject.put(String.valueOf(i++), name);
+    /**
+     * @description: 同盟检索
+     * @param {String} email
+     * @param {String} search
+     * @param {String} searchType 0 利用id检索 1 利用同盟名检索
+     * @return {*}
+     */
+    public CallResultMsg searchAlliance(String email, String search, String searchType) {
+        List<JSONObject> resultList = new ArrayList<>();
+        // 利用ID检索,
+        if (searchType.equals("0")) {
+            Alliance alliance = allianceMapper.selectById(Integer.valueOf(search));
+            resultList.add(JSON.parseObject(JSON.toJSONString(alliance)));
+        } else {
+            // 同盟名称模糊查询
+            QueryWrapper<Alliance> queryWrapper = new QueryWrapper<>();
+            queryWrapper.like("name", search);
+            List<Alliance> alliances = allianceMapper.selectList(queryWrapper);
+            List<JSONObject> JsonAlliances = new ArrayList<>();
+            //查询结果转换位json对象保存到List中
+            for (Alliance alliance : alliances) {
+                JsonAlliances.add(JSON.parseObject(JSON.toJSONString(alliance)));
+            }
+            JsonAlliances.forEach(resultList::add);
         }
-        return jsonObject;
+        QueryWrapper<Application> queryWrapper2 = new QueryWrapper<>();
+        queryWrapper2.eq("email", email);
+        queryWrapper2.eq("type", 0);
+        List<Application> appList = applicationMapper.selectList(queryWrapper2);
+        resultList.forEach(temp -> {
+            for (Application app : appList) {
+                if (temp.get("alliance_Id").equals(app.getAlliance_id())) {
+                    temp.put("application", "0");//已申请
+                    break;
+                }
+            }
+                temp.put("application", "1"); //未申请
+        });
+        return new CallResultMsg<>(resultList);
     }
 }
