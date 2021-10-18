@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-21 10:51:04
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-14 10:37:31
+ * @LastEditTime: 2021-10-18 19:23:38
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\UserInfoService.java
  */
 package com.kaoqin.stzb.service;
@@ -22,12 +22,21 @@ public interface UserInfoService {
      */
     int initUserInfo(String nickName,String email);
 
+
     /**
-     * @description: ユーザー情報取得
+     * @description: 获取统一返回形式的用户信息
      * @param {String} email
      * @return {*}
      */
-    UserInfo getUserInfo(String email);
+    CallResultMsg getUserInfo(String email);
+
+  
+    /**
+     * @description: 获取用户信息
+     * @param {String} email
+     * @return {*}
+     */
+    UserInfo getUserInfoObject(String email);
 
     /**
      * @description: 更新用户签名

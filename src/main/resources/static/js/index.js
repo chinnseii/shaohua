@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-23 14:31:01
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-16 16:51:27
+ * @LastEditTime: 2021-10-18 21:16:54
  * @FilePath: \stzb\src\main\resources\static\js\index.js
  */
 /**
@@ -30,6 +30,7 @@ function initIndex() {
             innerHtml += "<div id='createAlliance'></div>";
             innerHtml += "<div id='searchAlliance'></div>";
         } else {
+            sessionStorage.setItem("myAllianceId",userInfo.alliance_id);
             if (userInfo.jurisdiction < 3) {
                 innerHtml += "<h4>普通成员</h4>";
                 innerHtml += " <button type='button' class='btn btn-info'>（一般信息）Info</button> ";
@@ -42,15 +43,17 @@ function initIndex() {
             }
             if (userInfo.jurisdiction < 2) {
                 innerHtml += "<h4>管理</h4>";
-                innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
-                innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
-                innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
-                innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
+                innerHtml += " <button type='button' class='btn btn-warning' onclick='allianceAppHandle(this,0)'>同盟申请&nbsp;<span class='badge'>"+userInfo.application+ "</span></button>";
+                innerHtml += " <button type='button' class='btn btn-warning'>分组申请</button>";
+                innerHtml += " <button type='button' class='btn btn-warning'>发布任务</button>";
+                innerHtml += " <button type='button' class='btn btn-warning'>踢出同盟</button>";
                 innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
                 innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
             }
             if (userInfo.jurisdiction < 1) {
-                innerHtml += "<h4>盟操作</h4>";
+                innerHtml += "<h4>盟主</h4>";
+                innerHtml += " <button type='button' class='btn btn-warning'>任命管理</button>";
+                innerHtml += "<button type='button' class='btn btn-danger'>转让盟主</button>";
                 innerHtml += "<button type='button' class='btn btn-danger'>解散同盟</button>";
             }
         }
@@ -130,38 +133,7 @@ $("#allianceView").on("click", "#idSearch", function () {
     var search = $("#search").val();
     if (search.length == 10 && !isNaN(search)) {
         var res = tokenService("/alliance/search", "GET", false, { 'search': search, 'searchType': 0, 'email': sessionStorage.getItem("email") });
-        if (res.result) {
-            var innerHtml = "";
-            if(res.data==""||res.data=="{}"||res.data==null||res.data.length==0){
-                innerHtml += "<h4>未查询到相关同盟，请确认后重试</h4>";
-            }else{
-                var alliance= JSON.parse(res.data)[0];
-                innerHtml += "<div class='table-responsive'>";
-                innerHtml += "  <table class='table table-bordered'>";
-                innerHtml += "<tr>";
-                innerHtml += "  <td class='info'><h5>盟ID</h5></td>";
-                innerHtml += "  <td class='info'><h5>同盟名</h5></td>";
-                innerHtml += "  <td class='info'><h5>盟主</h5></td>";
-                innerHtml += "  <td class='info'><h5>人数</h5></td>";
-                innerHtml += "  <td class='info'><h5>盟介绍</h5></td>";
-                innerHtml += "  <td class='info'><h5>创建时间</h5></td>";
-                innerHtml += "  <td class='info'><h5>申请</h5></td>";
-                innerHtml += "</tr>";
-                innerHtml += "<tr>";
-                innerHtml += "  <td>"+alliance.alliance_Id+"</td>";
-                innerHtml += "  <td>"+alliance.name+"</td>";
-                innerHtml += "  <td>"+alliance.own_name+"</td>";
-                innerHtml += "  <td>"+alliance.population+"</td>";
-                innerHtml += "  <td>"+alliance.introduce+"</td>";
-                innerHtml += "  <td>"+alliance.create_time+"</td>";
-                innerHtml += "  <td>"+alliance.application+"</td>";
-                innerHtml += "</tr>";
-                innerHtml += "  </table>";
-                innerHtml += "</div>";
-            }
-            $("#searchresult").html("");
-            $("#searchresult").html(innerHtml);
-        }
+        createAllianceTable(res);
     } else {
         layx.msg('请输入正确的同盟ID', { dialogIcon: 'warn' });
     }
@@ -179,10 +151,77 @@ $("#allianceView").on("click", "#nameSearch", function () {
         layx.msg('请输入正确的同盟名称', { dialogIcon: 'warn' });
     } else {
         var res = tokenService("/alliance/search", "GET", false, { 'search': search, 'searchType': 1, 'email': sessionStorage.getItem("email") });
+        createAllianceTable(res);
     }
 
 });
-
+/**
+ * @description: 根据同盟检索结果生成同盟目录
+ * @param {*} res
+ * @return {*}
+ */
+function createAllianceTable(res) {
+    if (res.result) {
+        var innerHtml = "";
+        if (res.data == "" || res.data == "{}" || res.data == null || res.data == "[]" || res.data.length == 0) {
+            $("#searchresult").html("");
+            innerHtml += "<h4>未查询到相关同盟，请确认后重试</h4>";
+        } else {
+            innerHtml += "<div class='table-responsive'>";
+            innerHtml += "  <table class='table table-bordered .table-responsive'>";
+            innerHtml += "<tr>";
+            innerHtml += "  <td class='info'><h5>盟ID</h5></td>";
+            innerHtml += "  <td class='info'><h5>同盟名</h5></td>";
+            innerHtml += "  <td class='info'><h5>盟主</h5></td>";
+            innerHtml += "  <td class='info'><h5>人数</h5></td>";
+            innerHtml += "  <td class='info'><h5>盟介绍</h5></td>";
+            innerHtml += "  <td class='info'><h5>创建时间</h5></td>";
+            innerHtml += "  <td class='info'><h5>申请</h5></td>";
+            innerHtml += "</tr>";
+            for (var temp in JSON.parse(res.data)) {
+                var alliance = JSON.parse(res.data)[temp];
+                innerHtml += "<tr>";
+                innerHtml += "  <td>" + allianceIdHandle(alliance.alliance_Id) + "</td>";
+                innerHtml += "  <td>" + alliance.name + "</td>";
+                innerHtml += "  <td>" + alliance.own_name + "</td>";
+                innerHtml += "  <td>" + alliance.population + "</td>";
+                innerHtml += "  <td>" + alliance.introduce + "</td>";
+                innerHtml += "  <td>" + alliance.create_time + "</td>";
+                if (alliance.application == "0") {//0:已经申请
+                    innerHtml += "  <td><button class='btn btn-default' type='submit' disabled>已申请</button></td>";
+                } else {
+                    //1:未申请
+                    innerHtml += "  <td><button class='btn btn-default' type='submit' onclick='applicationAlliance(this," + alliance.alliance_Id + ")'>申请</button></td>";
+                }
+                innerHtml += "</tr>";
+            }
+            innerHtml += "  </table>";
+            innerHtml += "</div>";
+        }
+        $("#searchresult").html("");
+        $("#searchresult").html(innerHtml);
+    }
+}
+function applicationAlliance(Object, allianceId) {
+    var jsonData = {};
+    jsonData.type = "0";
+    jsonData.email = sessionStorage.getItem("email");
+    jsonData.id = allianceId;
+    var result = tokenService("/application/alliance", "POST", false, JSON.stringify(jsonData));
+    if (result.result) {
+        $(Object).attr('disabled', true);
+        $(Object).html("已申请");
+    }
+}
+/**
+ * @description: 为不足10位de联盟ID补0
+ * @param {*} id
+ * @return {*}
+ */
+function allianceIdHandle(id) {
+    var str = "0000000000" + id;
+    return str.substr(str.length - 10, 10);
+}
 
 /**
  * @description: 更新头像页面呼出
@@ -220,156 +259,13 @@ function loginOut() {
     });
 }
 
-/**
- * @description: 呼出笔记创建页面
- * @param {*}
- * @return {*}
- */
-function createNote() {
-    layx.iframe('shadow-color', 'ノート作成', 'createNote', {
+function allianceAppHandle(object,pageType){
+    sessionStorage.setItem("pageType",pageType);
+    layx.iframe('shadow-color', $(object).html(), 'handlePage', {
         shadable: 0.8
     });
     layx.setSize('shadow-color', { width: 700, height: 600 });
 }
-
-/**
- * @description: 根数页数与状态，获取某一页笔记
- * @param {*} page
- * @param {*} status
- * @return {*}
- */
-function getNote(page, status) {
-    sessionStorage.setItem("pageNo", page);
-    var getNoteObject = new Object();
-    getNoteObject.email = sessionStorage.getItem("email");
-    getNoteObject.status = status;
-    getNoteObject.page = page;
-    var jsonGetNote = JSON.stringify(getNoteObject);
-    var res = javaService("/getNote", jsonGetNote);
-    if (JSON.stringify(res) == '{}') {
-        $("#noteView").empty();
-        $("#noteView").append("<button type='button' id='createNote' class='btn btn-primary' onclick='createNote()'>ノート作成</button>");
-    } else {
-        noteView(page, res, status);
-    }
-}
-
-/**
- * @description: 显示一页笔记
- * @param {*} page
- * @param {*} res
- * @return {*}
- */
-function noteView(page, res, status) {
-    var count = res.count;
-    delete res.count;
-    $("#noteView").empty();
-    var innerHtml = "";
-    for (var index in res) {
-        var content = JSON.parse(res[index]);
-        innerHtml += "<div class='panel panel-default'>";
-        innerHtml += "<div class='panel-heading'>";
-        innerHtml += "<h4>" + content.title;
-        innerHtml += "<button type='button' class='btn btn-default' aria-label='Left Align' onclick='deleteNote(" + content.id + ")' style='float:right'>";
-        innerHtml += "<span class='glyphicon glyphicon-trash' aria-hidden='true'></span>";
-        innerHtml += "</button>";
-        innerHtml += "<button type='button' class='btn btn-default' aria-label='Left Align' onclick='editNote(" + content.id + ")' style='float:right'>";
-        innerHtml += "<span class='glyphicon glyphicon-pencil' aria-hidden='true'></span>";
-        innerHtml += "</button>";
-        innerHtml += "<button type='button' class='btn btn-default' style='float:right'>";
-        innerHtml += "<span class='glyphicon glyphicon-star-empty' aria-hidden='true'></span> Star";
-        innerHtml += "</button>";
-        innerHtml += "</h4>";
-        innerHtml += "<span class='label label-success' style=' margin-right: 3px;'>" + content.category_name + "</span>";
-        innerHtml += "<span class='label label-info' style=' margin-right: 3px;'>star&nbsp;<span class='badge'>" + content.star + "</span></span>";
-        innerHtml += "<span class='label label-warning' style=' margin-right: 3px;'>更新時間&nbsp;" + getTime(content.update_date) + "</span>";
-        innerHtml += "</div>";
-        innerHtml += "<div class='panel-body'>";
-        innerHtml += "<pre>" + html2Escape(content.content) + "</pre>";
-        innerHtml += "</div></div>";
-    }
-    innerHtml += "<nav aria-label='Page navigation'>";
-    innerHtml += "<ul class='pagination'>";
-    innerHtml += "<li>";
-    innerHtml += "<a href='#' aria-label='Previous' onclick='getPrePage(" + status + ")'>";
-    innerHtml += "<span aria-hidden='true'>&laquo;</span>";
-    innerHtml += "</a>";
-    innerHtml += "</li>";
-    var allPage;
-    if (count % 3 != 0) {
-        allPage = Math.ceil(count / 3);
-    } else {
-        allPage = count / 3;
-    }
-    sessionStorage.setItem("allPage", allPage);
-    var endPage;
-    var startPage;
-    //最多显示七页
-    if (allPage < 7) {
-        startPage = 0;
-        endPage = allPage;
-    } else {
-        if (page <= 3) {
-            startPage = 0;
-            endPage = 6;
-        } else {
-            startPage = Number(page) - 3;
-            endPage = Number(page) + 3;
-        }
-    }
-    if (endPage > allPage) {
-        endPage = allPage;
-        startPage = Number(allPage) - 6;
-    }
-    for (var i = startPage; i < endPage; i++) {
-        if (i == sessionStorage.getItem("pageNo")) {
-            innerHtml += "<li><a href='#' style='pointer-events: none;background-color:#D3D3D3'>" + parseInt(i + 1) + "</a></li>";
-        } else {
-            innerHtml += "<li><a href='#' onclick='getNote(" + i + "," + status + ")'>" + parseInt(i + 1) + "</a></li>";
-        }
-
-    }
-    innerHtml += "<li>";
-    innerHtml += "<a href='#' aria-label='Next'  onclick='getNextPage(" + status + ")'>";
-    innerHtml += "<span aria-hidden='true'>&raquo;</span>";
-    innerHtml += "</a>";
-    innerHtml += "</li>";
-    innerHtml += "</ul>";
-    innerHtml += "</nav>";
-    $("#noteView").append(innerHtml);
-}
-
-/**
- * @description: 显示下一页
- * @param {*} status
- * @return {*}
- */
-function getNextPage(status) {
-    var pageNo = sessionStorage.getItem("pageNo");
-    var allPage = sessionStorage.getItem("allPage");
-    var newPage = Number(pageNo) + 1;
-    if (newPage >= allPage) {
-        getNote(pageNo, status);
-    } else {
-        getNote(newPage, status);
-    }
-
-}
-
-/**
- * @description: 显示上一页
- * @param {*} status
- * @return {*}
- */
-function getPrePage(status) {
-    var pageNo = sessionStorage.getItem("pageNo");
-    if (pageNo == 0) {
-        getNote(parseInt(pageNo), status);
-    } else {
-        getNote((Number(pageNo) - 1), status);
-    }
-}
-
 /**
  * @description: 时间变换成年月日 00:00:00格式
  * @param {*} date

@@ -23,7 +23,11 @@ textarea.form-control {
     width: 12.8em !important; 
 }
 .btn {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+.badge{
+    color: red !important;  
 }
 
 @-moz-document url-prefix() {

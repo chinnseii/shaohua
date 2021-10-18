@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-15 16:24:23
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-12 16:25:29
+ * @LastEditTime: 2021-10-18 20:07:50
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\controller\HTMLController.java
  */
 package com.kaoqin.stzb.controller;
@@ -28,9 +28,9 @@ public class HTMLController {
     public String changeProfilePhoto() {
         return "changeProfilePhoto";   
     }
-    @RequestMapping("createNote")
-    public String createNote() {
-        return "createNote";   
+    @RequestMapping("handlePage")
+    public String handlePage() {
+        return "handlePage";   
     }
     @RequestMapping("editNote")
     public String editNote() {

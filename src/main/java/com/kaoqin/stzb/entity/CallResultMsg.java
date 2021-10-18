@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-05 15:25:34
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-12 17:10:36
+ * @LastEditTime: 2021-10-18 18:59:24
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\entity\CallResultMsg.java
  */
 package com.kaoqin.stzb.entity;
@@ -53,6 +53,19 @@ public class CallResultMsg<T> {
         this.data = data;
     }
 
+    /**
+     * @description: 向Data中追加属性
+     * @param {String} name
+     * @param {String} context
+     * @return 
+     * @return {*}
+     */
+    public  void addData(String name,String context) {
+        JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(this.getData()));
+        jsonObject.put(name, context);
+        this.data=(T) jsonObject;
+    }
+
     @Override
     public String toString() {
         JSONObject jsonObject = new JSONObject();
@@ -66,6 +79,7 @@ public class CallResultMsg<T> {
         }
         return jsonObject.toJSONString();
     }
+ 
 
     public String success() {
         return new CallResultMsg<>().toString();

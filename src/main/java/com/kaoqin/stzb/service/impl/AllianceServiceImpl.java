@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-18 17:07:02
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-16 14:04:33
+ * @LastEditTime: 2021-10-18 19:11:53
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\AllianceServiceImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -41,7 +41,8 @@ public class AllianceServiceImpl implements AllianceService {
         Alliance alliance = new Alliance();
         alliance.setOwn_email(email);
         alliance.setName(name);
-        alliance.setOwn_name(userInfoService.getUserInfo(email).getNick_name());
+        JSONObject userInfoJson=(JSONObject)userInfoService.getUserInfo(email).getData();
+        alliance.setOwn_name(userInfoJson.getString("nick_name"));
         alliance.setIntroduce(introduce);
         alliance.setPopulation(0);
         if (allianceMapper.insert(alliance) == 1) {
@@ -98,13 +99,13 @@ public class AllianceServiceImpl implements AllianceService {
         queryWrapper2.eq("type", 0);
         List<Application> appList = applicationMapper.selectList(queryWrapper2);
         resultList.forEach(temp -> {
+            temp.put("application", "1"); //默认未申请
             for (Application app : appList) {
                 if (temp.get("alliance_Id").equals(app.getAlliance_id())) {
-                    temp.put("application", "0");//已申请
+                    temp.put("application", "0");//已申请时跳出循环
                     break;
                 }
-            }
-                temp.put("application", "1"); //未申请
+            }            
         });
         return new CallResultMsg<>(resultList);
     }

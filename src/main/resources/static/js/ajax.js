@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-07 10:08:39
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-16 14:41:40
+ * @LastEditTime: 2021-10-18 16:55:41
  * @FilePath: \stzb\src\main\resources\static\js\ajax.js
  */
 /**

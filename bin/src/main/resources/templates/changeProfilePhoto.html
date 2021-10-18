@@ -1,0 +1,181 @@
+﻿<!doctype html>
+<!--[if IE 7]>
+<html class="ie ie7" lang="zh-CN" xmlns:sitemesh>
+<![endif]-->
+<!--[if IE 8]>
+<html class="ie ie8" lang="zh-CN" xmlns:sitemesh>
+<![endif]-->
+<!--[if !(IE 7) | !(IE 8)]>
+<html lang="zh-CN" xmlns:sitemesh>
+<![endif]-->
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <link rel="stylesheet" href="/libs/changeProfilePhoto/css/common.css" type="text/css" media="all">
+    <link rel="stylesheet" href="/libs/changeProfilePhoto/css/my-account.css" type="text/css" media="all">
+    <link href="css/layx.min.css" rel="stylesheet" type="text/css" />
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="js/html5.js"></script>
+    <script type="text/javascript" src="js/respond.min.js"></script>
+    <![endif]-->
+    <link rel="fluid-icon" href="https://github.com/fluidicon.png" title="GitHub">
+    <!--[if IE 8]>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <![endif]-->
+    <script type="text/javascript" src="/libs/changeProfilePhoto/js/jquery-1.11.0.min.js"></script>
+    <link rel="stylesheet" href="/libs/changeProfilePhoto/css/jquery.Jcrop.css" />
+</head>
+
+<body>
+    <script type="text/javascript">
+        var url = window.location.search;
+        var source = url.substring(url.lastIndexOf('=') + 1, url.length);
+        var sUserAgent = navigator.userAgent.toLowerCase();
+        var bIsIpad = sUserAgent.match(/ipad/i) == "ipad";
+        var bIsIphoneOs = sUserAgent.match(/iphone os/i) == "iphone os";
+        var bIsMidp = sUserAgent.match(/midp/i) == "midp";
+        var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";
+        var bIsUc = sUserAgent.match(/ucweb/i) == "ucweb";
+        var bIsAndroid = sUserAgent.match(/android/i) == "android";
+        var bIsCE = sUserAgent.match(/windows ce/i) == "windows ce";
+        var bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";
+    </script>
+    <div class="container">
+        <div class="wrap">
+            <p class="login-title pl67 yahei">アカウント設定</p>
+        </div>
+        <div class="wrap account-container clearfix">
+            <div class="triangle-up-box relative">
+                <span class="triangle-up-bg"></span>
+                <span class="triangle-up"></span>
+            </div>
+            <div class="account-wrap">
+                <div id="select-tab" data-selected-tab="toSetPortrait">
+                    <div class="set-portrait yahei">
+                        <form id="cropForm" name="cropForm" method="post">
+                            <!--通过生成尺寸和旋转角度 后台获取尺寸和旋转角度再进行裁剪-->
+                            <p class="upload-btn-box font16 clearfix">
+                             <a class="upload-btn font18 left relative" href="javascript:;">
+                                    アプロード<input id="uploadImg" type="file" name="file" />
+                                </a>
+                                注意：写真はJPG、GIF、PNG以外又はサイズが2M以上の場合、アップロード出来ません。
+                            </p>
+                            <input id="offsetY1" type="hidden" name="top" value="0">
+                            <input id="offsetX1" type="hidden" name="left" value="0">
+                            <input id="offsetX2" type="hidden" name="right" value="100">
+                            <input id="offsetY2" type="hidden" name="bottom" value="100">
+                            <input id="rotation" type="hidden" name="rotation" value="0">
+                            <input id="scale" type="hidden" name="scale" value="0">
+                        </form>
+                        <div class="clearfix">
+                            <div class="portrait-left left">
+                                <div id="avatarBox" class="avatar-box">
+                                    <div id="avatarPrototype" class="avatar-prototype portrait-preview">
+                                        <img class="profilephoto" src="../../static/profilephoto/20210811\08044796764.png" alt="" />
+                                    </div>
+                                </div>
+                                <div class="avatar-zoom clearfix">
+                                    <a href="javascript:;" title="ズームイン" class="zoom-in right" id="idBig">ズームイン</a>
+                                    <a href="javascript:;" title="ズームアウト" class="zoom-out left" id="idSmall">ズームアウト</a>
+                                    <div id="avatarZoom" class="zoom-silder relative">
+                                        <span id="sliderBlock" class="ui-slider-handle"></span>
+                                    </div>
+                                </div>
+                                <div class="portrait-submit-box clearfix">
+                                    <a class="portrait-submit-save" href="javascript:;"
+                                        onClick="submitAvatar();">確&nbsp;認</a>
+                                    <a class="portrait-submit-cancel" href="javascript:;"
+                                        onClick="window.location.reload()">キャンセル</a>
+                                </div>
+                            </div>
+                            <dl class="portrait-list font14 left">
+                                <dd>
+                                    <div class="avatar-preview-item">
+                                        <div class="avatar-preview-big portrait-preview">
+                                            <div id="avatarPreviewBig">
+                                                <img class="profilephoto" src="" alt="" />
+                                            </div>
+                                        </div>
+                                        <p>160×160像素</p>
+                                    </div>
+                                    <div class="avatar-preview-item">
+                                        <div class="avatar-preview-normal portrait-preview">
+                                            <div id="avatarPreviewNormal">
+                                                <img class="profilephoto" src="" alt="" />
+                                            </div>
+                                        </div>
+                                        <p>100×100像素</p>
+                                    </div>
+                                    <div class="avatar-preview-item">
+                                        <div class="avatar-preview-small portrait-preview">
+                                            <div id="avatarPreviewSmall">
+                                                <img class="profilephoto" src="" alt="" />
+                                            </div>
+                                        </div>
+                                        <p>50×50像素</p>
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="/libs/changeProfilePhoto/js/popups.js"></script>
+    <script type="text/javascript" src="/libs/changeProfilePhoto/js/jquery-ui-1.10.4.custom.js"></script>
+    <script type="text/javascript" src="/libs/changeProfilePhoto/jcrop/jquery.Jcrop.js"></script>
+    <script type="text/javascript" src="/libs/changeProfilePhoto/jcrop/viewimg.1.0.js"></script>
+    <script type="text/javascript" src="/libs/changeProfilePhoto/js/portrait.js"></script>
+    <script src="/libs/Layx/layx.min.js"></script>
+    <script src="/js/errorCode.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#avatarZoom").slider({
+                value: 0,
+                min: 0,
+                max: 220,
+                step: 22,
+                disabled: true
+            });
+            $(".profilephoto").attr("src",sessionStorage.getItem("profilephotoPath"));
+        });
+        window.onload = function () {
+            //默认图像居中显示
+            if ($("#avatarPrototype img").width() < 300 && $("#avatarPrototype>img").height() < 300) {
+                resetImgSize($("#avatarPrototype>img"));
+            } else {
+                cutImage($("#avatarPrototype>img"), 300, 300);
+            }
+            $('#avatarPrototype').Jcrop({
+                setSelect: [0, 0, 100, 100],
+                onChange: showPreview,
+                onSelect: showPreview,
+                bgFade: true,
+                bgColor: "#000",
+                aspectRatio: 1,
+                bgOpacity: .5,
+                minSize: [100, 100],
+                minSelect: [50, 50],
+                onRelease: function () {
+                    resetAvatar();
+                }
+            });
+            var file = $("#uploadImg");
+            file.viewimg({
+                targetDiv: $("#avatarPrototype,#avatarPreviewBig,#avatarPreviewNormal,#avatarPreviewSmall"),  //图片显示的容器
+                sizingMethod: "scale", //按照图片比例自适应容器
+                errorDiv: $("#error")  //错误显示位置
+            });
+        }
+    </script>
+</body>
+
+</html>

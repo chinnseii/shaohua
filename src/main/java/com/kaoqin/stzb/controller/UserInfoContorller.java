@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-21 09:49:05
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-14 11:45:56
+ * @LastEditTime: 2021-10-18 19:27:38
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\controller\UserInfoContorller.java
  */
 package com.kaoqin.stzb.controller;
@@ -45,15 +45,14 @@ public class UserInfoContorller {
   @GetMapping(value = "/userInfo")
   @Operation(summary = "根据邮箱获取用户信息")
   public String getUserInfo(@RequestParam("email") String email) throws JSONException {
-    CallResultMsg<UserInfo> res = new CallResultMsg<>();
     log.info("用户: {} 用户信息读取开始...", email);
-    UserInfo userInfo = userInfoService.getUserInfo(email);
-    if (userInfo == null) {
+    CallResultMsg userInfo = userInfoService.getUserInfo(email);
+    if (!userInfo.isResult()) {
       log.warn("用户: {} 账号信息读取失败", email);
-      return res.fail(CodeAndMsg.READUSERINFOFAIL);
+      return new CallResultMsg<>().fail(CodeAndMsg.READUSERINFOFAIL);
     }
     log.warn("用户: {} 账号信息读取成功", email);
-    return res.success(userInfo);
+    return userInfo.toString();
   }
 
   @TokenCheck
@@ -100,7 +99,7 @@ public class UserInfoContorller {
       avatar.put("scale", scale);
       avatar.put("updatetime", StringUtil.getTimeToday());
       // 获取旧头像信息
-      UserInfo userInfo = userInfoService.getUserInfo(email);
+      UserInfo userInfo = userInfoService.getUserInfoObject(email);
       if (userInfo == null) {
         return res.toString();
       }

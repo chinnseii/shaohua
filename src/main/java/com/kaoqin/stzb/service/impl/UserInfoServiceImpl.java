@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-21 10:53:11
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-14 13:17:05
+ * @LastEditTime: 2021-10-18 21:29:34
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\UserInfoServiceImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -21,6 +21,7 @@ import com.kaoqin.stzb.entity.CallResultMsg;
 import com.kaoqin.stzb.entity.Constant;
 import com.kaoqin.stzb.entity.UserInfo;
 import com.kaoqin.stzb.exception.CodeAndMsg;
+import com.kaoqin.stzb.service.ApplicationService;
 import com.kaoqin.stzb.service.UserInfoService;
 import com.kaoqin.stzb.utils.StringUtil;
 
@@ -36,7 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 public class UserInfoServiceImpl implements UserInfoService {
     @Autowired
     private UserInfoMapper userInfoMapper;
-
+    @Autowired
+    private ApplicationService applicationService;
     @Autowired
     private Constant constant;
 
@@ -50,7 +52,21 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public UserInfo getUserInfo(String email) {
+    public CallResultMsg getUserInfo(String email) {
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("email", email);
+        UserInfo userInfo = userInfoMapper.selectOne(queryWrapper);
+        CallResultMsg res=new CallResultMsg<>(userInfo);
+        //获取入盟申请信息
+        if(userInfo.getAlliance_id()==null||userInfo.getAlliance_id()==0){
+            res.addData("application","0");
+        }else{
+            res.addData("application",String.valueOf(applicationService.applicationCount(userInfo.getAlliance_id(), 0)));
+        }     
+        return res;
+    }
+    @Override
+    public UserInfo getUserInfoObject(String email) {
         QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("email", email);
         return userInfoMapper.selectOne(queryWrapper);
@@ -147,14 +163,15 @@ public class UserInfoServiceImpl implements UserInfoService {
             res.put("errorCode", 509);
             return res;
         }
-        log.info("用户: {}  头像上传成功，开始更新数据库",userInfo.getEmail());
+        log.info("用户: {}  头像上传成功，开始更新数据库", userInfo.getEmail());
         userInfo.setAvatar_path(avatarNewPath.replace(constant.getAVATAR_PATH(), ""));
         if (userInfoMapper.updateById(userInfo) != 1) {
-            log.error("用户: {}  数据库头像信息更新失败",userInfo.getEmail());
+            log.error("用户: {}  数据库头像信息更新失败", userInfo.getEmail());
             res.put("errorCode", 509);
         }
         log.info("用户:" + userInfo.getEmail() + " 数据库头像信息更新成功");
         res.put("res", true);
         return res;
     }
+
 }
