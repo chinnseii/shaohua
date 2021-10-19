@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-24 17:39:04
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-18 21:58:09
+ * @LastEditTime: 2021-10-19 21:38:49
  * @FilePath: \stzb\src\main\resources\static\js\handlePage.js
  */
 $(function () {
@@ -35,18 +35,19 @@ function pageType0() {
         innerHtml += "  <table class='table table-bordered .table-responsive'>";
         innerHtml += "<tr>";
         innerHtml += "  <td class='info'><h5>申请人</h5></td>";
+        innerHtml += "  <td class='info'><h5>申请人详情</h5></td>";
         innerHtml += "  <td class='info'><h5>申请时间</h5></td>";
         innerHtml += "  <td class='info'><h5>是否同意</h5></td>";
         innerHtml += "</tr>";
         var appList = JSON.parse(res.data);
         for (var appIndex in appList) {
-            var app=appList[appIndex];
+            var app = appList[appIndex];
             innerHtml += "<tr>";
             innerHtml += "  <td>" + app.nick_name + "</td>";
+            innerHtml += "  <td><button class='btn btn-default' type='submit' value='" + app.email + "' onclick='getAppUserInfo(this)'>查看信息</button></td>";
             innerHtml += "  <td>" + app.create_time + "</td>";
-            innerHtml += "  <td><button class='btn btn-default' type='submit' >同意</button>";
-            innerHtml += "  <button class='btn btn-default' type='submit' >拒绝</button>";
-            innerHtml += "</td>";
+            innerHtml += "  <td><button class='btn btn-default' name='button" + app.id + "' type='submit' onclick='agree(this," + app.id + ",0)' >同意</button>";
+            innerHtml += "  <button class='btn btn-default' name='button" + app.id + "' type='submit' onclick='agree(this," + app.id + ",1)' >拒绝</button></td>";
             innerHtml += "</tr>";
         }
         innerHtml += "  </table>";
@@ -56,8 +57,28 @@ function pageType0() {
     }
 }
 
-
-
+function getAppUserInfo(object) {
+    alert(object.value + "功能还没实现");
+}
+function agree(object, id, type) {
+    var className = object.name;
+    var jsonData = {};
+    jsonData.email = sessionStorage.getItem("email");
+    jsonData.id = id;
+    jsonData.type = type;
+    var res = tokenService("/application/agree", "PUT", false, JSON.stringify(jsonData));
+    if (res.result) {
+        $("button[name='" + className + "']").attr('disabled', true);
+        $("button[name='" + className + "']").css("background","grey");
+        if (type == 0) {
+            $(object).html("已同意");
+            $("button[name='" + className + "']")[1].remove();
+        } else {
+            $(object).html("已拒绝");
+            $("button[name='" + className + "']")[0].remove();
+        }
+    }
+}
 
 
 // /**根据输入情况，禁用与开启确认按钮

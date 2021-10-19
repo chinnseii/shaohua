@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-04 14:50:42
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-18 21:34:35
+ * @LastEditTime: 2021-10-19 17:59:21
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\ApplicationService.java
  */
 package com.kaoqin.stzb.service;
@@ -18,5 +18,7 @@ public interface ApplicationService {
     int applicationCount(Integer id, Integer type);
 
     CallResultMsg<List<Application>> getAllianceApp(String alliacneId);
+
+    CallResultMsg<Application> appAgree(String email, Integer id, Integer type);
     
 }

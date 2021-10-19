@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-23 14:31:01
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-18 21:16:54
+ * @LastEditTime: 2021-10-19 18:22:16
  * @FilePath: \stzb\src\main\resources\static\js\index.js
  */
 /**
@@ -30,7 +30,7 @@ function initIndex() {
             innerHtml += "<div id='createAlliance'></div>";
             innerHtml += "<div id='searchAlliance'></div>";
         } else {
-            sessionStorage.setItem("myAllianceId",userInfo.alliance_id);
+            sessionStorage.setItem("myAllianceId", userInfo.alliance_id);
             if (userInfo.jurisdiction < 3) {
                 innerHtml += "<h4>普通成员</h4>";
                 innerHtml += " <button type='button' class='btn btn-info'>（一般信息）Info</button> ";
@@ -43,7 +43,11 @@ function initIndex() {
             }
             if (userInfo.jurisdiction < 2) {
                 innerHtml += "<h4>管理</h4>";
-                innerHtml += " <button type='button' class='btn btn-warning' onclick='allianceAppHandle(this,0)'>同盟申请&nbsp;<span class='badge'>"+userInfo.application+ "</span></button>";
+                innerHtml += " <button type='button' class='btn btn-warning' onclick='allianceAppHandle(this,0)'>同盟申请&nbsp;";
+                if (userInfo.application > 0) {
+                    innerHtml += "<span class='badge'>" + userInfo.application + "</span>";
+                }
+                innerHtml += " </button>";
                 innerHtml += " <button type='button' class='btn btn-warning'>分组申请</button>";
                 innerHtml += " <button type='button' class='btn btn-warning'>发布任务</button>";
                 innerHtml += " <button type='button' class='btn btn-warning'>踢出同盟</button>";
@@ -76,9 +80,9 @@ $("#allianceView").on("click", "#create", () => {
     jsonData.name = name;
     jsonData.introduce = introduce;
     jsonData.email = sessionStorage.getItem("email");
-    var result = tokenService("/alliance", "POST", true, JSON.stringify(jsonData));
+    var result = tokenService("/alliance", "POST", false, JSON.stringify(jsonData));
     if (result.result) {
-        window.location.href = "index";
+        location.reload();
     }
 });
 
@@ -259,8 +263,8 @@ function loginOut() {
     });
 }
 
-function allianceAppHandle(object,pageType){
-    sessionStorage.setItem("pageType",pageType);
+function allianceAppHandle(object, pageType) {
+    sessionStorage.setItem("pageType", pageType);
     layx.iframe('shadow-color', $(object).html(), 'handlePage', {
         shadable: 0.8
     });

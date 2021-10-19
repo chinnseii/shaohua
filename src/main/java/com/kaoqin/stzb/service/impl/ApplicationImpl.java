@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-04 14:51:03
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-18 21:35:26
+ * @LastEditTime: 2021-10-19 21:52:59
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\ApplicationImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -9,10 +9,14 @@ package com.kaoqin.stzb.service.impl;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.kaoqin.stzb.dao.AllianceMapper;
 import com.kaoqin.stzb.dao.ApplicationMapper;
 import com.kaoqin.stzb.dao.UserInfoMapper;
+import com.kaoqin.stzb.entity.Alliance;
 import com.kaoqin.stzb.entity.Application;
 import com.kaoqin.stzb.entity.CallResultMsg;
+import com.kaoqin.stzb.entity.UserInfo;
+import com.kaoqin.stzb.exception.CodeAndMsg;
 import com.kaoqin.stzb.service.ApplicationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,8 @@ public class ApplicationImpl implements ApplicationService {
     private ApplicationMapper applicationMapper;
     @Autowired
     private UserInfoMapper userInfoMapper;
+    @Autowired
+    private AllianceMapper allianceMapper;
 
     @Override
     /**
@@ -70,5 +76,44 @@ public class ApplicationImpl implements ApplicationService {
         queryWrapper.eq("status", 0);
         List<Application> appList = applicationMapper.selectList(queryWrapper);
         return new CallResultMsg<>(appList);
+    }
+
+    @Override
+    public CallResultMsg appAgree(String handleEmail, Integer id, Integer agree) {
+        UserInfo hadnleInfo = userInfoMapper.selectById(handleEmail);
+        Application application = applicationMapper.selectById(id);
+        Alliance alliance = allianceMapper.selectById(application.getAlliance_id());
+        if (hadnleInfo.getJurisdiction() == 2) {
+            return new CallResultMsg<>(CodeAndMsg.NOJSDICTION);
+        }
+        Integer appType = application.getType();
+        UserInfo appUserInfo = userInfoMapper.selectById(application.getEmail());
+        if (appType == 0) {
+            if (agree == 0) {
+                // 为申请人设置同盟ID
+                appUserInfo.setAlliance_id(application.getAlliance_id());
+                // 设置同盟名
+                appUserInfo.setAlliance_name(alliance.getName());
+                // 设置权限为普通
+                appUserInfo.setJurisdiction(2);
+                // 更新同盟人数
+                alliance.setPopulation(alliance.getPopulation() + 1);
+            }
+        } else if (appType == 1) {
+            // 等以后再填这个坑
+            appUserInfo.setGroup_id(application.getGroup_id());
+        } else {
+            return new CallResultMsg<>(CodeAndMsg.ACCOUNTFREEZE);
+        }
+        application.setProcess_result(agree);
+        application.setStatus(1);
+        if (agree == 0) {
+            userInfoMapper.updateById(appUserInfo);
+            allianceMapper.updateById(alliance);
+        }
+        if (applicationMapper.updateById(application) == 1) {
+            return new CallResultMsg<>(application);
+        }
+        return new CallResultMsg<>(CodeAndMsg.UNKNOWEXCEPTION);
     }
 }

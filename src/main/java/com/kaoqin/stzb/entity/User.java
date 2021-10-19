@@ -1,14 +1,16 @@
 /*
  * @Date: 2021-07-15 16:24:24
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-12 21:30:23
+ * @LastEditTime: 2021-10-19 20:37:14
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\entity\User.java
  */
 package com.kaoqin.stzb.entity;
 
 import java.sql.Date;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 

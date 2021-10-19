@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-15 16:24:23
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-18 16:53:34
+ * @LastEditTime: 2021-10-19 18:09:16
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\controller\UserContorller.java
  */
 package com.kaoqin.stzb.controller;
@@ -92,10 +92,10 @@ public class UserContorller {
             log.error("用户: {} 未输入用户名或者密码", email);
             return res.fail(CodeAndMsg.NOIDORNOPSD);
         }     
-        if (!redisUtil.hasKey(email)||!redisUtil.get(email).equals(emailcheck)) {
-            log.error("用户: {} 验证码超时或不正确", email);
-            return res.fail(CodeAndMsg.MAILCHECKFAIL);
-        }
+        // if (!redisUtil.hasKey(email)||!redisUtil.get(email).equals(emailcheck)) {
+        //     log.error("用户: {} 验证码超时或不正确", email);
+        //     return res.fail(CodeAndMsg.MAILCHECKFAIL);
+        // }
         if (userService.checkEmile(email) == 0) {
             if (userService.insert(email, userPassword) != 0) {
                 log.info("用户: {} 注册成功，账号开始初始化", email);

@@ -1,10 +1,12 @@
 /*
  * @Date: 2021-07-15 16:24:24
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-14 14:23:27
+ * @LastEditTime: 2021-10-19 21:06:21
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\UserServiceImpl.java
  */
 package com.kaoqin.stzb.service.impl;
+
+import java.sql.Date;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -24,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     /**
-     * @description: ログイン
+     * @description: 登录
      * @param {String} email
      * @param {String} password
      * @return {*}
@@ -34,10 +36,15 @@ public class UserServiceImpl implements UserService {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("email", email);
         queryWrapper.eq("password", passwordMd5);
-        User user =new User();
-        user.setEmail(email);
-        userMapper.updateById(user);
-        return userMapper.selectOne(queryWrapper);
+        User user = userMapper.selectOne(queryWrapper);
+        if(user==null){
+            return null;
+        }
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.setSql("login_time=now()");
+        updateWrapper.eq("id", user.getId());
+        userMapper.update(new User(), updateWrapper);
+        return user;
     }
 
     @Override
@@ -73,18 +80,18 @@ public class UserServiceImpl implements UserService {
     /**
      * @description: ロックフラグ更新
      * @param {String} email
-     * @param {int} 0:flg清0，1:fla加1
+     * @param {int}    0:flg清0，1:fla加1
      * @return {*}
      */
     public int updateLockFlg(String email, int a) {
-        UpdateWrapper<User> userUpdateWrapper = new UpdateWrapper<>();      
+        UpdateWrapper<User> userUpdateWrapper = new UpdateWrapper<>();
         userUpdateWrapper.eq("email", email);
         User user = userMapper.selectOne(userUpdateWrapper);
-        if(a==0){
+        if (a == 0) {
             user.setLock_flg(0);
-        }else{
-            user.setLock_flg(user.getLock_flg()+1);
-        }     
+        } else {
+            user.setLock_flg(user.getLock_flg() + 1);
+        }
         return userMapper.updateById(user);
     }
 
@@ -96,9 +103,8 @@ public class UserServiceImpl implements UserService {
      */
     public int checkLockFlg(String email) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("lock_flg").eq("email", email);      
+        queryWrapper.select("lock_flg").eq("email", email);
         return userMapper.selectOne(queryWrapper).getLock_flg();
     }
-
 
 }

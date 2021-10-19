@@ -49,7 +49,7 @@
     </script>
     <div class="container">
         <div class="wrap">
-            <p class="login-title pl67 yahei">アカウント設定</p>
+            <p class="login-title pl67 yahei">账号设定</p>
         </div>
         <div class="wrap account-container clearfix">
             <div class="triangle-up-box relative">
@@ -63,9 +63,9 @@
                             <!--通过生成尺寸和旋转角度 后台获取尺寸和旋转角度再进行裁剪-->
                             <p class="upload-btn-box font16 clearfix">
                              <a class="upload-btn font18 left relative" href="javascript:;">
-                                    アプロード<input id="uploadImg" type="file" name="file" />
+                                    上传<input id="uploadImg" type="file" name="file" />
                                 </a>
-                                注意：写真はJPG、GIF、PNG以外又はサイズが2M以上の場合、アップロード出来ません。
+                                只能上传2MB以下的头像
                             </p>
                             <input id="offsetY1" type="hidden" name="top" value="0">
                             <input id="offsetX1" type="hidden" name="left" value="0">
@@ -90,9 +90,9 @@
                                 </div>
                                 <div class="portrait-submit-box clearfix">
                                     <a class="portrait-submit-save" href="javascript:;"
-                                        onClick="submitAvatar();">確&nbsp;認</a>
+                                        onClick="submitAvatar();">确&nbsp;认</a>
                                     <a class="portrait-submit-cancel" href="javascript:;"
-                                        onClick="window.location.reload()">キャンセル</a>
+                                        onClick="window.location.reload()">取消</a>
                                 </div>
                             </div>
                             <dl class="portrait-list font14 left">
@@ -145,7 +145,7 @@
                 step: 22,
                 disabled: true
             });
-            $(".profilephoto").attr("src",sessionStorage.getItem("profilephotoPath"));
+            $(".profilephoto").attr("src",sessionStorage.getItem("avatar_path"));
         });
         window.onload = function () {
             //默认图像居中显示

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-04 14:47:30
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-18 21:37:07
+ * @LastEditTime: 2021-10-19 17:58:28
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\controller\ApplicationContorller.java
  */
 package com.kaoqin.stzb.controller;
@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,10 +59,31 @@ public class ApplicationContorller {
             @RequestParam(value = "allianceId") String alliacneId) throws IOException, JSONException {
         log.info("用户: {} 开始获取同盟: {} 相关申请信息", email, alliacneId);
         CallResultMsg<List<Application>> res = applicationService.getAllianceApp(alliacneId);
-        if(!res.isResult()){
+        if (!res.isResult()) {
             log.info("用户: {} 获取同盟: {} 相关申请信息失败", email, alliacneId);
         }
-        log.info("用户: {} 获取同盟: {} 相关申请信息成功，获取 {} 条同盟申请", email, alliacneId,res.getData().size());
+        log.info("用户: {} 获取同盟: {} 相关申请信息成功，获取 {} 条同盟申请", email, alliacneId, res.getData().size());
+        return res.toString();
+    }
+
+    @TokenCheck
+    @PutMapping(value = "/application/agree")
+    @Operation(summary = "申请信息同意处理")
+    public String putAllianceApp(@RequestBody Map<String, String> map) {
+        String email = map.get("email");
+
+        Integer id = Integer.valueOf(map.get("id"));
+        Integer type = Integer.valueOf(map.get("type"));
+        if (!(type==0||type==1)) {
+            return new CallResultMsg<>().fail(CodeAndMsg.INPUTERROR);
+        }
+        log.info("用户: {} 开始处理同盟申请信息，申请ID: {},是否同意: {}",email,id,type);
+        CallResultMsg<Application> res= applicationService.appAgree(email,id,type);
+        if(res.isResult()){
+            log.info("用户: {} 处理同盟申请信息: {} 成功",email,id);
+        }else{
+            log.info("用户: {} 处理同盟申请信息: {} 失败 :{}",email,id,res.getMessage()); 
+        }
         return res.toString();
     }
 }

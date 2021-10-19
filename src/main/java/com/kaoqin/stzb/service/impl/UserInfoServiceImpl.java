@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-21 10:53:11
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-18 21:29:34
+ * @LastEditTime: 2021-10-19 14:38:42
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\UserInfoServiceImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -23,6 +23,7 @@ import com.kaoqin.stzb.entity.UserInfo;
 import com.kaoqin.stzb.exception.CodeAndMsg;
 import com.kaoqin.stzb.service.ApplicationService;
 import com.kaoqin.stzb.service.UserInfoService;
+import com.kaoqin.stzb.utils.MD5Util;
 import com.kaoqin.stzb.utils.StringUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,24 +100,24 @@ public class UserInfoServiceImpl implements UserInfoService {
             throws Exception {
         JSONObject res = new JSONObject();
         res.put("res", false);
-        // アバター設定されてない場合削除処理行わない
+        // 如果头像没有设定贼不删除旧头像
         if (!userInfo.getAvatar_path().equals(constant.getINIT_AVATAR_NAME())) {
             Path path = Paths.get(constant.getAVATAR_PATH() + userInfo.getAvatar_path());
             Files.deleteIfExists(path);
             String dirPath = userInfo.getAvatar_path().replaceAll(path.toFile().getName(), "");
-            // 旧アバター削除済み、空のフォルダの場合フォルダも削除
+            // 删除旧头像如果文件夹为空则文件夹也一并删除
             if (Paths.get(dirPath).toFile().exists() && Paths.get(dirPath).toFile().listFiles().length == 0) {
                 Files.deleteIfExists(Paths.get(dirPath));
             }
         }
-        // 日付によって、アバター保存用フォルダを作成
+        // 根据日期生成文件夹
         String avatarDir = constant.getAVATAR_PATH() + StringUtil.getTimeToday();
         File avatarDirFile = new File(avatarDir);
         if (!avatarDirFile.isDirectory()) {
             avatarDirFile.mkdirs();
         }
         String filetype = StringUtil.getFileType(multipartFile.getOriginalFilename());
-        String avatarNewPath = avatarDir + File.separator + userInfo.getEmail() + "." + filetype;
+        String avatarNewPath = avatarDir + File.separator + MD5Util.MD5Encode(userInfo.getEmail(),"UTF-8")  + "." + filetype;
         avatar.put("path", avatarNewPath);
         try {
             BufferedImage bufferedImage = ImageIO.read(multipartFile.getInputStream());
@@ -155,7 +156,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             int selectWidth = Integer.parseInt(avatar.getString("right")) - x;
             int selectHeight = Integer.parseInt(avatar.getString("bottom")) - y;
             BufferedImage newImage = tmpImage.getSubimage(x, y, selectWidth, selectHeight);
-            // アバターファイル作成
+            // 生成头像图片
             ImageIO.write(newImage, filetype, new File(avatarNewPath));
         } catch (Exception e) {
             log.info("用户:" + userInfo.getEmail() + " 图片上传失败", e.getMessage());

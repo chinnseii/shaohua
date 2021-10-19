@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-18 17:07:02
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-18 19:11:53
+ * @LastEditTime: 2021-10-19 21:40:39
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\AllianceServiceImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -44,7 +44,7 @@ public class AllianceServiceImpl implements AllianceService {
         JSONObject userInfoJson=(JSONObject)userInfoService.getUserInfo(email).getData();
         alliance.setOwn_name(userInfoJson.getString("nick_name"));
         alliance.setIntroduce(introduce);
-        alliance.setPopulation(0);
+        alliance.setPopulation(1);
         if (allianceMapper.insert(alliance) == 1) {
             CallResultMsg update = userInfoService.updateUserAllianceId(email, alliance.getAlliance_Id(),
                     alliance.getName());

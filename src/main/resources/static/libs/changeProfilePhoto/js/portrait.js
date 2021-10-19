@@ -185,7 +185,7 @@ function submitAvatar() {
             if (!result.res) {
                 layx.msg(result.defeat,{dialogIcon:'error'});
             }else{
-                layx.load('loadId', 'アバター更新中...');
+                layx.load('loadId', '头像更新中...');
                 setTimeout(function () {
                     layx.destroy('loadId');
                     parent.location.reload();

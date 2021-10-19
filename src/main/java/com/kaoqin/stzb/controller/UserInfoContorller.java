@@ -1,12 +1,11 @@
 /*
  * @Date: 2021-07-21 09:49:05
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-18 19:27:38
+ * @LastEditTime: 2021-10-19 14:49:51
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\controller\UserInfoContorller.java
  */
 package com.kaoqin.stzb.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.kaoqin.stzb.annotation.TokenCheck;
 import com.kaoqin.stzb.entity.CallResultMsg;
 import com.kaoqin.stzb.entity.UserInfo;
@@ -87,7 +86,7 @@ public class UserInfoContorller {
     try {
       res.put("res", false);
       if (fileName == null || fileName.length() == 0) {
-        res.put("defeat", "新しいアバターを選んでください。");
+        res.put("defeat", "请选择新的图片");
         return res.toString();
       }
       JSONObject avatar = new JSONObject();
@@ -105,7 +104,7 @@ public class UserInfoContorller {
       }
       res = userInfoService.updateUserProfilePhoto(userInfo, avatar, multipartFile);
     } catch (Exception e) {
-      log.error("ユーザー:" + email + " アバター更新失敗しました" + e.getMessage());
+      log.error("用户: {} 头像更新失败 {}",email,e.getMessage());
       e.printStackTrace();
     }
     return res.toString();
