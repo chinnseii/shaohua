@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-04 14:51:03
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-19 21:52:59
+ * @LastEditTime: 2021-10-20 13:46:12
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\ApplicationImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -50,8 +50,8 @@ public class ApplicationImpl implements ApplicationService {
             application.setGroup_id(id);
         }
         application.setNick_name(userInfoMapper.selectById(email).getNick_name());
-        application.setStatus(0);
-        application.setProcess_result(0);
+        application.setStatus(0);//ステータス
+        application.setProcess_result(0);//申請結果
         return applicationMapper.insert(application);
     }
 
@@ -84,7 +84,7 @@ public class ApplicationImpl implements ApplicationService {
         Application application = applicationMapper.selectById(id);
         Alliance alliance = allianceMapper.selectById(application.getAlliance_id());
         if (hadnleInfo.getJurisdiction() == 2) {
-            return new CallResultMsg<>(CodeAndMsg.NOJSDICTION);
+            return new CallResultMsg<>(CodeAndMsg.NOJURISDICTION);
         }
         Integer appType = application.getType();
         UserInfo appUserInfo = userInfoMapper.selectById(application.getEmail());

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-06 17:41:36
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-19 18:03:02
+ * @LastEditTime: 2021-10-20 09:58:15
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\exception\CodeAndMsg.java
  */
 package com.kaoqin.stzb.exception;
@@ -27,7 +27,7 @@ public enum CodeAndMsg {
     READUSERINFOFAIL(517,"读取用户信息失败"),
     UPDATEUSERINFOFAIL(518,"更新用户信息失败"),
     INPUTERROR(519, "请求参数异常"),
-    NOJSDICTION(520,"无权执行此操作"),
+    NOJURISDICTION(520,"无权执行此操作"),
     UN(1000,"");
 
 
