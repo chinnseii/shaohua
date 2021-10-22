@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-23 14:31:01
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-19 18:22:16
+ * @LastEditTime: 2021-10-22 10:12:24
  * @FilePath: \stzb\src\main\resources\static\js\index.js
  */
 /**
@@ -50,13 +50,15 @@ function initIndex() {
                 innerHtml += " </button>";
                 innerHtml += " <button type='button' class='btn btn-warning'>分组申请</button>";
                 innerHtml += " <button type='button' class='btn btn-warning'>发布任务</button>";
-                innerHtml += " <button type='button' class='btn btn-warning'>踢出同盟</button>";
+                innerHtml += " <button type='button' class='btn btn-warning' onclick='allianceAppHandle(this,1)'>踢出同盟</button>";
                 innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
                 innerHtml += " <button type='button' class='btn btn-warning'>（警告）Warning</button>";
             }
             if (userInfo.jurisdiction < 1) {
                 innerHtml += "<h4>盟主</h4>";
-                innerHtml += " <button type='button' class='btn btn-warning'>任命管理</button>";
+                innerHtml += " <button type='button' class='btn btn-info'>创建分组</button>";
+                innerHtml += " <button type='button' class='btn btn-info'>解散分组</button>";
+                innerHtml += " <button type='button' class='btn btn-warning'>任命分组管理</button>";
                 innerHtml += "<button type='button' class='btn btn-danger'>转让盟主</button>";
                 innerHtml += "<button type='button' class='btn btn-danger'>解散同盟</button>";
             }

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-21 10:53:11
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-19 14:38:42
+ * @LastEditTime: 2021-10-22 11:46:04
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\UserInfoServiceImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -12,6 +12,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -49,6 +50,8 @@ public class UserInfoServiceImpl implements UserInfoService {
         userInfo.setEmail(email);
         userInfo.setAvatar_path(constant.getINIT_AVATAR_NAME());
         userInfo.setNick_name(nickName);
+        userInfo.setPoint(0);
+        userInfo.setPoint_last(0);
         return userInfoMapper.insert(userInfo);
     }
 
@@ -57,15 +60,17 @@ public class UserInfoServiceImpl implements UserInfoService {
         QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("email", email);
         UserInfo userInfo = userInfoMapper.selectOne(queryWrapper);
-        CallResultMsg res=new CallResultMsg<>(userInfo);
-        //获取入盟申请信息
-        if(userInfo.getAlliance_id()==null||userInfo.getAlliance_id()==0){
-            res.addData("application","0");
-        }else{
-            res.addData("application",String.valueOf(applicationService.applicationCount(userInfo.getAlliance_id(), 0)));
-        }     
+        CallResultMsg res = new CallResultMsg<>(userInfo);
+        // 获取入盟申请信息
+        if (userInfo.getAlliance_id() == null || userInfo.getAlliance_id() == 0) {
+            res.addData("application", "0");
+        } else {
+            res.addData("application",
+                    String.valueOf(applicationService.applicationCount(userInfo.getAlliance_id(), 0)));
+        }
         return res;
     }
+
     @Override
     public UserInfo getUserInfoObject(String email) {
         QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
@@ -117,7 +122,8 @@ public class UserInfoServiceImpl implements UserInfoService {
             avatarDirFile.mkdirs();
         }
         String filetype = StringUtil.getFileType(multipartFile.getOriginalFilename());
-        String avatarNewPath = avatarDir + File.separator + MD5Util.MD5Encode(userInfo.getEmail(),"UTF-8")  + "." + filetype;
+        String avatarNewPath = avatarDir + File.separator + MD5Util.MD5Encode(userInfo.getEmail(), "UTF-8") + "."
+                + filetype;
         avatar.put("path", avatarNewPath);
         try {
             BufferedImage bufferedImage = ImageIO.read(multipartFile.getInputStream());
@@ -173,6 +179,27 @@ public class UserInfoServiceImpl implements UserInfoService {
         log.info("用户:" + userInfo.getEmail() + " 数据库头像信息更新成功");
         res.put("res", true);
         return res;
+    }
+
+    @Override
+    public CallResultMsg getAllianceUserInfo(Integer allianceId) {
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("alliance_id", allianceId);
+        queryWrapper.orderByDesc("point");
+        List<UserInfo> res = userInfoMapper.selectList(queryWrapper);
+        if(res.isEmpty()){
+            return new CallResultMsg<>();
+        }
+        return new CallResultMsg<>(res);
+    }
+
+    @Override
+    public CallResultMsg updateUserInfo(UserInfo userInfo) {
+    int res=userInfoMapper.updateById(userInfo);
+        if(res!=1){
+        return new CallResultMsg<>(CodeAndMsg.USERINFOUPDATEFAIL);  
+        }
+        return new CallResultMsg<>();
     }
 
 }

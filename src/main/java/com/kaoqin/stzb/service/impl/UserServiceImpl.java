@@ -1,12 +1,10 @@
 /*
  * @Date: 2021-07-15 16:24:24
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-19 21:06:21
+ * @LastEditTime: 2021-10-22 10:41:04
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\UserServiceImpl.java
  */
 package com.kaoqin.stzb.service.impl;
-
-import java.sql.Date;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;

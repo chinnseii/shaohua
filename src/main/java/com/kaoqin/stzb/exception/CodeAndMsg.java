@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-06 17:41:36
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-20 09:58:15
+ * @LastEditTime: 2021-10-22 11:45:41
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\exception\CodeAndMsg.java
  */
 package com.kaoqin.stzb.exception;
@@ -12,7 +12,7 @@ public enum CodeAndMsg {
     UNAUTHORIZED(401,"请求要求用户的身份认证"),
     UNKNOWEXCEPTION(500, "发生未知错误"),
     INPUTTOLONG(501, "输入信息过长"),
-    USERINFOUPDATEFAIL(502, "更新用户同盟信息失败"),
+    USERINFOUPDATEFAIL(502, "更新用户信息失败"),
     CREATEALLIANCEFAIL(503, "创建同盟时遇到问题，请稍后重试"),
     MAILFAIL(507, "邮箱验证码发送频繁，请稍后再试"),
     MAILEMPTY(508, "请输入邮箱"),

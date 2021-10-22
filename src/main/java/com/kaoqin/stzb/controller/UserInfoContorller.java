@@ -1,11 +1,14 @@
 /*
  * @Date: 2021-07-21 09:49:05
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-19 14:49:51
+ * @LastEditTime: 2021-10-22 11:48:51
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\controller\UserInfoContorller.java
  */
 package com.kaoqin.stzb.controller;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.kaoqin.stzb.annotation.TokenCheck;
 import com.kaoqin.stzb.entity.CallResultMsg;
 import com.kaoqin.stzb.entity.UserInfo;
@@ -55,6 +58,21 @@ public class UserInfoContorller {
   }
 
   @TokenCheck
+  @GetMapping(value = "/userInfo/alliance")
+  @Operation(summary = "获取所在同盟其他成员信息")
+  public String getAllianceUserInfo(@RequestParam("email") String email, @RequestParam("allianceId") Integer allianceId)
+      throws JSONException {
+    log.info("用户: {} 开始读取同盟ID {} 成员信息", email, allianceId);
+    CallResultMsg userInfo = userInfoService.getAllianceUserInfo(allianceId);
+    if (!userInfo.isResult()) {
+      log.warn("用户: {} 账号信息读取失败", email);
+      return new CallResultMsg<>().fail(CodeAndMsg.READUSERINFOFAIL);
+    }
+    log.warn("用户: {} 账号信息读取成功", email);
+    return userInfo.toString();
+  }
+
+  @TokenCheck
   @ResponseBody
   @PutMapping(value = "/userInfo/signature")
   @Operation(summary = "更新个性签名")
@@ -74,13 +92,30 @@ public class UserInfoContorller {
 
   @TokenCheck
   @ResponseBody
+  @PutMapping(value = "/application/expel")
+  @Operation(summary = "踢出同盟")
+  public String expel(@RequestParam("email") String email, @RequestParam("id") Integer id) {
+    log.info("用户: {} 开始踢出同盟操作 被踢出者ID {}", email, id);
+    UserInfo userInfo = new UserInfo();
+    userInfo.setEmail("email");
+    CallResultMsg<UserInfo> res = userInfoService.updateUserSignature(userInfo);
+    if (!res.isResult()) {
+      log.warn("用户: {} 个人签名更新失败", email);
+      return res.toString();
+    }
+    log.info("用户: {} 个人签名更新成功", email);
+    return res.toString();
+  }
+
+  @TokenCheck
+  @ResponseBody
   @PostMapping(value = "/updateProfilePhoto")
   @Operation(summary = "更新用户头像")
   public String updateProfilePhoto(@RequestParam("email") String email, @RequestParam("top") String top,
       @RequestParam("left") String left, @RequestParam("right") String right, @RequestParam("bottom") String bottom,
       @RequestParam("rotation") String rotation, @RequestParam("scale") String scale,
       @RequestParam("file") MultipartFile multipartFile) {
-    log.info("用户: {} 头像更新开始",email);
+    log.info("用户: {} 头像更新开始", email);
     JSONObject res = new JSONObject();
     String fileName = multipartFile.getOriginalFilename();
     try {
@@ -104,7 +139,7 @@ public class UserInfoContorller {
       }
       res = userInfoService.updateUserProfilePhoto(userInfo, avatar, multipartFile);
     } catch (Exception e) {
-      log.error("用户: {} 头像更新失败 {}",email,e.getMessage());
+      log.error("用户: {} 头像更新失败 {}", email, e.getMessage());
       e.printStackTrace();
     }
     return res.toString();

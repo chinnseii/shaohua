@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-21 09:23:19
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-12 21:33:45
+ * @LastEditTime: 2021-10-22 10:37:45
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\entity\UserInfo.java
  */
 package com.kaoqin.stzb.entity;
@@ -31,6 +31,8 @@ public class UserInfo {
     private Integer message;
     @ApiModelProperty("个人积分")
     private Integer point;
+    @ApiModelProperty("剩余积分")
+    private Integer point_last;
     @ApiModelProperty("邮箱")
     private String nick_name;
     @ApiModelProperty("盟ID")

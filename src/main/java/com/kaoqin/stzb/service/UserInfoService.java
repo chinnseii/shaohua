@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-21 10:51:04
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-18 19:23:38
+ * @LastEditTime: 2021-10-22 11:41:12
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\UserInfoService.java
  */
 package com.kaoqin.stzb.service;
@@ -30,6 +30,15 @@ public interface UserInfoService {
      */
     CallResultMsg getUserInfo(String email);
 
+
+        /**
+     * @description: 获取统一返回形式的用户信息
+     * @param {String} email
+     * @return {*}
+     */
+    CallResultMsg getAllianceUserInfo(Integer allianceId);
+
+
   
     /**
      * @description: 获取用户信息
@@ -52,6 +61,15 @@ public interface UserInfoService {
      * @return {*}
      */
     CallResultMsg updateUserAllianceId(String email,int id,String name);
+
+      /**
+     * @description: 更新同盟信息
+     * @param {UserInfo} userInfo
+     * @return {*}
+     */
+    CallResultMsg updateUserInfo(UserInfo userInfo);
+
+
 
     /**
      * @description: ユーザーアバター更新
