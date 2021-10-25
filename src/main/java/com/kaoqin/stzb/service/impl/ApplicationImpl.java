@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-04 14:51:03
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-20 13:46:12
+ * @LastEditTime: 2021-10-25 13:16:24
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\ApplicationImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -50,8 +50,8 @@ public class ApplicationImpl implements ApplicationService {
             application.setGroup_id(id);
         }
         application.setNick_name(userInfoMapper.selectById(email).getNick_name());
-        application.setStatus(0);//ステータス
-        application.setProcess_result(0);//申請結果
+        application.setStatus(0);//申请状态
+        application.setProcess_result(0);//申请结果
         return applicationMapper.insert(application);
     }
 

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-07 10:08:39
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-18 16:55:41
+ * @LastEditTime: 2021-10-25 13:07:45
  * @FilePath: \stzb\src\main\resources\static\js\ajax.js
  */
 /**
@@ -79,7 +79,7 @@ function errorMsg(code, msg) {
         }
     }
     //警告
-    var codeList2 = new Array(507, 508, 509, 510, 511, 512, 513, 514, 515, 516);
+    var codeList2 = new Array(507, 508, 509, 510, 511, 512, 513, 514, 515, 516,517,518,519,520,521);
     for (var a in codeList2) {
         if (codeList2[a] == code) {
             setTimeout(function () {

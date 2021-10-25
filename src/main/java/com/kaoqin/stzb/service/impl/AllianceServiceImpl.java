@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-18 17:07:02
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-19 21:40:39
+ * @LastEditTime: 2021-10-25 13:13:57
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\AllianceServiceImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -97,6 +97,7 @@ public class AllianceServiceImpl implements AllianceService {
         QueryWrapper<Application> queryWrapper2 = new QueryWrapper<>();
         queryWrapper2.eq("email", email);
         queryWrapper2.eq("type", 0);
+        queryWrapper2.eq("status", 0);
         List<Application> appList = applicationMapper.selectList(queryWrapper2);
         resultList.forEach(temp -> {
             temp.put("application", "1"); //默认未申请
@@ -108,5 +109,11 @@ public class AllianceServiceImpl implements AllianceService {
             }            
         });
         return new CallResultMsg<>(resultList);
+    }
+
+    @Override
+    public Alliance updateAllianceById(Alliance alliance) {
+        allianceMapper.updateById(alliance);
+        return alliance;
     }
 }

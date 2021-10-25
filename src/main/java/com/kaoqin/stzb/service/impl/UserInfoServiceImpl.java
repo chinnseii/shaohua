@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-21 10:53:11
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-22 11:46:04
+ * @LastEditTime: 2021-10-25 15:47:52
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\impl\UserInfoServiceImpl.java
  */
 package com.kaoqin.stzb.service.impl;
@@ -16,19 +16,23 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.kaoqin.stzb.dao.AllianceMapper;
 import com.kaoqin.stzb.dao.UserInfoMapper;
+import com.kaoqin.stzb.entity.Alliance;
 import com.kaoqin.stzb.entity.CallResultMsg;
 import com.kaoqin.stzb.entity.Constant;
 import com.kaoqin.stzb.entity.UserInfo;
 import com.kaoqin.stzb.exception.CodeAndMsg;
+import com.kaoqin.stzb.service.AllianceService;
 import com.kaoqin.stzb.service.ApplicationService;
 import com.kaoqin.stzb.service.UserInfoService;
 import com.kaoqin.stzb.utils.MD5Util;
 import com.kaoqin.stzb.utils.StringUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +43,10 @@ import lombok.extern.slf4j.Slf4j;
 public class UserInfoServiceImpl implements UserInfoService {
     @Autowired
     private UserInfoMapper userInfoMapper;
+    @Autowired
+    private AllianceMapper allianceMapper;
+    @Autowired
+    private UserInfoService userInfoService;
     @Autowired
     private ApplicationService applicationService;
     @Autowired
@@ -105,7 +113,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             throws Exception {
         JSONObject res = new JSONObject();
         res.put("res", false);
-        // 如果头像没有设定贼不删除旧头像
+        // 如果头像没有设定则不需要删除旧头像
         if (!userInfo.getAvatar_path().equals(constant.getINIT_AVATAR_NAME())) {
             Path path = Paths.get(constant.getAVATAR_PATH() + userInfo.getAvatar_path());
             Files.deleteIfExists(path);
@@ -187,7 +195,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         queryWrapper.eq("alliance_id", allianceId);
         queryWrapper.orderByDesc("point");
         List<UserInfo> res = userInfoMapper.selectList(queryWrapper);
-        if(res.isEmpty()){
+        if (res.isEmpty()) {
             return new CallResultMsg<>();
         }
         return new CallResultMsg<>(res);
@@ -195,11 +203,34 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public CallResultMsg updateUserInfo(UserInfo userInfo) {
-    int res=userInfoMapper.updateById(userInfo);
-        if(res!=1){
-        return new CallResultMsg<>(CodeAndMsg.USERINFOUPDATEFAIL);  
+        int res = userInfoMapper.updateById(userInfo);
+        if (res != 1) {
+            return new CallResultMsg<>(CodeAndMsg.USERINFOUPDATEFAIL);
         }
         return new CallResultMsg<>();
+    }
+
+    @Override
+    public CallResultMsg expel(String email, String expel_email) {
+        UserInfo userInfo = userInfoService.getUserInfoObject(email);
+        if (userInfo.getJurisdiction() == 2) {
+            return new CallResultMsg<>(CodeAndMsg.NOJURISDICTION);
+        }
+        UserInfo expelUserInfo = userInfoService.getUserInfoObject(expel_email);
+        Integer allianceId = expelUserInfo.getAlliance_id();
+        UpdateWrapper<UserInfo> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set("alliance_id", null);
+        updateWrapper.set("alliance_name", null);
+        updateWrapper.set("group_id", null);
+        updateWrapper.set("group_name", null);
+        updateWrapper.set("jurisdiction", null);
+        updateWrapper.eq("email", expel_email);
+        Alliance alliance = allianceMapper.selectById(allianceId);
+        alliance.setPopulation(alliance.getPopulation() - 1);
+        if (userInfoMapper.update(expelUserInfo, updateWrapper) == 1 && allianceMapper.updateById(alliance) == 1) {
+            return new CallResultMsg<>();
+        }
+        return new CallResultMsg<>(CodeAndMsg.UNKNOWEXCEPTION);
     }
 
 }

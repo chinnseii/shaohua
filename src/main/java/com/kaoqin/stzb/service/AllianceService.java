@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-18 17:06:42
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-16 14:03:46
+ * @LastEditTime: 2021-10-22 16:56:09
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\AllianceService.java
  */
 package com.kaoqin.stzb.service;
@@ -9,6 +9,7 @@ package com.kaoqin.stzb.service;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.kaoqin.stzb.entity.Alliance;
 import com.kaoqin.stzb.entity.CallResultMsg;
 
 
@@ -42,4 +43,11 @@ public interface AllianceService {
      * @return {*}
      */
     CallResultMsg<List<JSONObject>> searchAlliance(String email, String search, String searchType);
+
+    /**
+     * @description: 根据盟ID更新盟信息
+     * @param {Alliance} alliance
+     * @return {*}
+     */
+    Alliance updateAllianceById(Alliance alliance);
 }

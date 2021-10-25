@@ -1,16 +1,16 @@
 /*
  * @Date: 2021-07-21 10:51:04
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-22 11:41:12
+ * @LastEditTime: 2021-10-25 15:47:19
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\service\UserInfoService.java
  */
 package com.kaoqin.stzb.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.kaoqin.stzb.entity.CallResultMsg;
 import com.kaoqin.stzb.entity.UserInfo;
 
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserInfoService {
@@ -80,5 +80,8 @@ public interface UserInfoService {
      */
     JSONObject updateUserProfilePhoto(UserInfo userInfo, JSONObject avatar, MultipartFile multipartFile)
             throws Exception;
+
+
+    CallResultMsg expel(String email,String expel_email);
 
 }

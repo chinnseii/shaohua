@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-21 09:23:19
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-22 10:37:45
+ * @LastEditTime: 2021-10-25 12:22:10
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\entity\UserInfo.java
  */
 package com.kaoqin.stzb.entity;

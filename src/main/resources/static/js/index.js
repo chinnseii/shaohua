@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-23 14:31:01
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-22 10:12:24
+ * @LastEditTime: 2021-10-25 17:17:18
  * @FilePath: \stzb\src\main\resources\static\js\index.js
  */
 /**
@@ -56,7 +56,7 @@ function initIndex() {
             }
             if (userInfo.jurisdiction < 1) {
                 innerHtml += "<h4>盟主</h4>";
-                innerHtml += " <button type='button' class='btn btn-info'>创建分组</button>";
+                innerHtml += " <button type='button' class='btn btn-info' onclick='allianceAppHandle(this,2)'>创建分组</button>";
                 innerHtml += " <button type='button' class='btn btn-info'>解散分组</button>";
                 innerHtml += " <button type='button' class='btn btn-warning'>任命分组管理</button>";
                 innerHtml += "<button type='button' class='btn btn-danger'>转让盟主</button>";
@@ -326,66 +326,14 @@ function html2Escape(sHtml) {
         return { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c];
     });
 }
-
-$("#createCategory").click(function () {
-    layx.prompt('科目作成', '科目名を入力してください。', function (id, value, textarea, button, event) {
-        layx.confirm('', '科目: ' + value + ' 公開しますか？', null, {
-            buttons: [
-                {
-                    label: 'はい',
-                    callback: function (id, button, event) {
-                        createCategory(value, 0);
-                        layx.destroy(id);
-                    }
-                },
-                {
-                    label: 'いええ',
-                    callback: function (id, button, event) {
-                        createCategory(value, 1);
-                        layx.destroy(id);
-                    }
-                }
-            ]
-        });
-    });
-});
 $("#signature").blur(function () {
-    var headerObject = new Object();
-    headerObject.token = sessionStorage.getItem("token");
-    headerObject.email = sessionStorage.getItem("email");
-    var headerInfo = JSON.stringify(headerObject);
+    var url = "/userInfo/signature/" + sessionStorage.getItem("email") + "/" + $("#signature").val();
     if (sessionStorage.getItem("signature") != $("#signature").val()) {
-        $.ajax({
-            type: "POST",
-            url: "/updateUserSignature",
-            beforeSend: function (request) {
-                request.setRequestHeader("header", headerInfo);
-            },
-            data: {
-                'email': sessionStorage.getItem("email"),
-                'signature': $("#signature").val()
-            },
-            success: function (res) {
-                var result;
-                if (typeof res == "string") {
-                    result = JSON.parse(res);
-                } else {
-                    result = res;
-                }
-                if (result.errorCode != undefined) {
-                    errorCode(result.errorCode);
-                }
-                if (!result.res) {
-                    layx.msg('個人説明更新失敗しました、も一度更新してください。', { dialogIcon: 'error' });
-                } else {
-                    sessionStorage.setItem("signature", $("#signature").val());
-                    layx.alert('個人説明更新', '個人説明更新成功', null, { dialogIcon: 'success' });
-                }
-            },
-            error: function (result) {
-                errorCode(result.status);
-            }
-        });
+        var result = tokenService(url, "PUT", false, null);
+        if (result.result) {
+            sessionStorage.setItem("signature", $("#signature").val());
+            layx.alert('更新个性签名', '个性签名更新成功', null, { dialogIcon: 'success' });
+        }
     }
 });
 

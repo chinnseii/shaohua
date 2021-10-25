@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-04 14:47:30
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-20 09:53:54
+ * @LastEditTime: 2021-10-25 14:25:24
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\controller\ApplicationContorller.java
  */
 package com.kaoqin.stzb.controller;
@@ -71,7 +71,6 @@ public class ApplicationContorller {
     @Operation(summary = "申请信息同意处理")
     public String putAllianceApp(@RequestBody Map<String, String> map) {
         String email = map.get("email");
-
         Integer id = Integer.valueOf(map.get("id"));
         Integer type = Integer.valueOf(map.get("type"));
         if (!(type==0||type==1)) {

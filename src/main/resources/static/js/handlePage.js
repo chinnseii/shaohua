@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-24 17:39:04
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-22 11:52:32
+ * @LastEditTime: 2021-10-25 19:25:58
  * @FilePath: \stzb\src\main\resources\static\js\handlePage.js
  */
 $(function () {
@@ -14,6 +14,10 @@ $(function () {
         case "1":
             //踢出同盟
             pageType1();
+            break;
+        case "2":
+            //创建分组
+            pageType2();
             break;
         default:
             layx.msg('未知操作，请重试', { dialogIcon: 'error' });
@@ -38,10 +42,10 @@ function pageType0() {
         innerHtml += "  <td class='info'><h5>申请时间</h5></td>";
         innerHtml += "  <td class='info'><h5>是否同意</h5></td>";
         innerHtml += "</tr>";
-        if(res.data=="[]"||res.data=="{}"||res.data==""||res.data==undefined){
+        if (res.data == "[]" || res.data == "{}" || res.data == "" || res.data == undefined) {
             innerHtml += "<tr><td><h4>没有新的申请信息</h4></td></tr>";
-        }else{
-            var appList = JSON.parse(res.data);    
+        } else {
+            var appList = JSON.parse(res.data);
             for (var appIndex in appList) {
                 var app = appList[appIndex];
                 innerHtml += "<tr>";
@@ -59,6 +63,8 @@ function pageType0() {
         $("#handlebody").html(innerHtml);
     }
 }
+
+
 
 function pageType1() {
     $("#pageTitle").html("踢出同盟");
@@ -82,33 +88,88 @@ function pageType1() {
         var userInfoList = JSON.parse(res.data);
         for (var index in userInfoList) {
             var userInfo = userInfoList[index];
-            innerHtml += "<tr>";
-            innerHtml += "  <td>" + userInfo.email + "</td>";
-            innerHtml += "  <td>" + userInfo.nick_name + "</td>";
-            innerHtml += "  <td>" + userInfo.point + "</td>";
-            innerHtml += "  <td>" + userInfo.point_last + "</td>";
-            innerHtml += "  <td>" + getJurisdiction(userInfo.jurisdiction) + "</td>";
-            innerHtml += "  <td>" + getGroupName(userInfo.group_name) + "</td>";
-            innerHtml += "  <td><button class='btn btn-default' type='submit' onclick='expel(this," + userInfo.email + ")' >踢出</button></td>";
-            innerHtml += "</tr>";
+            if (userInfo.email != sessionStorage.getItem("email")) {
+                innerHtml += "<tr>";
+                innerHtml += "  <td>" + userInfo.email + "</td>";
+                innerHtml += "  <td>" + userInfo.nick_name + "</td>";
+                innerHtml += "  <td>" + userInfo.point + "</td>";
+                innerHtml += "  <td>" + userInfo.point_last + "</td>";
+                innerHtml += "  <td>" + getJurisdiction(userInfo.jurisdiction) + "</td>";
+                innerHtml += "  <td>" + getGroupName(userInfo.group_name) + "</td>";
+                innerHtml += "  <td><button class='btn btn-default' type='submit' onclick='expel(this," + changeToString(userInfo.email) + ")' >踢出</button></td>";
+                innerHtml += "</tr>";
+            }
         }
         innerHtml += "  </table>";
         innerHtml += "</div>";
         $("#handlebody").html("");
         $("#handlebody").html(innerHtml);
     }
-
-
-
-
-
-
 }
 
-
+function pageType2() {
+    $("#pageTitle").html("创建分组");
+    var res = tokenService("/userInfo/alliance", "GET", false, {
+        'allianceId': sessionStorage.getItem("myAllianceId"),
+        'email': sessionStorage.getItem("email")
+    });
+    if (res.result) {
+        var innerHtml = "";
+        innerHtml += "<form>";
+        innerHtml += "<div class='form-group'>";
+        innerHtml += "<label for='exampleInputEmail1'>分组名称</label>";
+        innerHtml += "<input type='text' class='form-control' id='groupName' placeholder='请输入分组名称'>";
+        innerHtml += "</div>";
+        innerHtml += "<div class='form-group'>";
+        innerHtml += "<label for='exampleInputEmail1'>指定管理者</label>";
+        innerHtml += "<div class='row'>";
+        innerHtml += "<div class='col-lg-6'>";
+        innerHtml += "<div class='input-group'>";
+        innerHtml += "<input type='text' class='form-control' placeholder='请输入管理者昵称' id='leaderName'>";
+        innerHtml += "<div class='input-group-btn'>";
+        innerHtml += "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>管理者昵称<span class='caret'></span></button>";
+        innerHtml += "<ul class='dropdown-menu dropdown-menu-right'>";
+        var userInfoList = JSON.parse(res.data);
+        for (var index in userInfoList) {
+            var userInfo = userInfoList[index];
+            if (userInfo.jurisdiction == 2) {
+                innerHtml += "<li><a >　<span class='glyphicon glyphicon-user' aria-hidden='true'>　</span>　" + userInfo.nick_name + "　　　　　　<span class='glyphicon glyphicon-asterisk' aria-hidden='true'></span>　个人总积分　:　" + userInfo.point + "　点　　　　　　<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>　当前分组　:　"+getGroupName(userInfo.group_name)+"</a></li>";
+                if(index!=userInfoList.length-1){
+                    innerHtml += "<li role='separator' class='divider'></li>";
+                }      
+            }
+        }
+        innerHtml += "</ul>";
+        innerHtml += "</div>";
+        innerHtml += "</div>";
+        innerHtml += "</div>";
+        innerHtml += "</div>";
+        innerHtml += "<div class='form-group'>";
+        innerHtml += "<label for='exampleInputFile'>File input</label>";
+        innerHtml += "<input type='file' id='exampleInputFile'>";
+        innerHtml += "<p class='help-block'>Example block-level help text here.</p>";
+        innerHtml += "</div>";
+        innerHtml += "<div class='checkbox'>";
+        innerHtml += "<label>";
+        innerHtml += "<input type='checkbox'> Check me out";
+        innerHtml += "</label>";
+        innerHtml += "</div>";
+        innerHtml += "<button type='submit' class='btn btn-default'>Submit</button>";
+        innerHtml += "</form>";
+        $("#handlebody").html("");
+        $("#handlebody").html(innerHtml);
+    }
+}
+function createGroupUl(data) {
+    innerHtml = "";
+}
 
 function getAppUserInfo(object) {
     alert(object.value + "功能还没实现");
+}
+
+function changeToString(str) {
+    return JSON.stringify(str);
 }
 
 function getJurisdiction(str) {
@@ -127,11 +188,16 @@ function getGroupName(str) {
     }
     return str;
 }
-function expel(object, id){
-    var jsonData = {};
-    jsonData.email = sessionStorage.getItem("email");
-    jsonData.id = id;
-    var res = tokenService("/application/expel", "PUT", false, JSON.stringify(jsonData));  
+function expel(object, expel_email) {
+    var jsonObject = new Object();
+    jsonObject.email = sessionStorage.getItem("email");
+    jsonObject.expel_email = expel_email;
+    var res = tokenService("/userInfo/expel/" + JSON.stringify(jsonObject), "PUT", false, JSON.stringify(jsonObject));
+    if (res.result) {
+        $(object).html("已踢出");
+        $(object).attr('disabled', true);
+        $(object).css("background", "grey");
+    }
 }
 
 function agree(object, id, type) {
@@ -153,108 +219,3 @@ function agree(object, id, type) {
         }
     }
 }
-
-
-// /**根据输入情况，禁用与开启确认按钮
-//  * @description: 
-//  * @param {*}
-//  * @return {*}
-//  */
-// $("#content,#title").keyup(() => {
-//     if (checkInput()) {
-//         $("#confirm").removeAttr("disabled");
-//     } else {
-//         $("#confirm").attr("disabled", "disabled");
-//     }
-// })
-
-// /**
-//  * @description: 检测输入情况
-//  * @param {*}
-//  * @return {*}
-//  */
-// function checkInput() {
-//     if ($("#title").val() == "") {
-//         return false;
-//     }
-//     if ($("#title").val().length > 50) {
-//         layx.msg('タイトルを50文字以下に設定してください', { dialogIcon: 'warn' });
-//     }
-//     if ($("#content").val() == "") {
-//         return false;
-//     }
-//     if ($("#content").val().length > 4999) {
-//         layx.msg('内容を5000文字以下に設定してください', { dialogIcon: 'warn' });
-//     }
-//     return true;
-// }
-
-// /**重置输入框
-//  * @description: 
-//  * @param {*}
-//  * @return {*}
-//  */
-// function reset() {
-//     $("select:first option:first").attr("selected", true).siblings("option").attr("selected", false);
-//     $("#content").val();
-//     $("#title").val();
-// }
-
-// function uploadNote() {
-//     var jsonObject = new Object();
-//     jsonObject.email = sessionStorage.getItem("email");
-//     jsonObject.subjects = $("#subjectsList option:selected").text();
-//     if ($("#status option:selected").text() == "公開") {
-//         jsonObject.status = "0";
-//     } else {
-//         jsonObject.status = "1";
-//     }
-//     jsonObject.title = $("#title").val();
-//     jsonObject.content = $("#content").val();
-//     var jsonData = JSON.stringify(jsonObject);
-//     var res = javaService("/uploadNote", jsonData);
-//     if (res.result) {
-//         layx.msg('ノート作成成功', { dialogIcon: 'success' });
-//         layx.destroy('loadId');
-//         parent.location.reload();
-//     }
-// }
-
-// /**
-//  * @description: ajax调用JAVA接口(同步)
-//  * @param {*} url
-//  * @param {*} jsonData
-//  * @return {*}
-//  */
-// function javaService(url, jsonData) {
-//     var headerObject = new Object();
-//     headerObject.token = sessionStorage.getItem("token");
-//     headerObject.email = sessionStorage.getItem("email");
-//     var headerInfo = JSON.stringify(headerObject);
-//     var res;
-//     $.ajax({
-//         type: "POST",
-//         url: url,
-//         async: false,
-//         beforeSend: function (request) {
-//             request.setRequestHeader("header", headerInfo);
-//         },
-//         data: {
-//             'jsonData': jsonData
-//         },
-//         success: function (returnValue) {
-//             if (typeof returnValue == "string") {
-//                 res = JSON.parse(returnValue);
-//             } else {
-//                 res = returnValue;
-//             }
-//             if (res.errorCode != undefined) {
-//                 errorCode(res.errorCode);
-//             }
-//         },
-//         error: function (error) {
-//             errorCode(error.status);
-//         }
-//     });
-//     return res;
-// }
