@@ -1,10 +1,11 @@
 /*
  * @Date: 2021-08-24 17:39:04
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-25 19:25:58
+ * @LastEditTime: 2021-10-26 18:02:12
  * @FilePath: \stzb\src\main\resources\static\js\handlePage.js
  */
 $(function () {
+    parent.layx.setSize(getLayxId(),{width:375,height:812});        // 在iframe页面调用
     var pageType = sessionStorage.getItem("pageType");
     switch (pageType) {
         case "0":
@@ -63,8 +64,6 @@ function pageType0() {
         $("#handlebody").html(innerHtml);
     }
 }
-
-
 
 function pageType1() {
     $("#pageTitle").html("踢出同盟");
@@ -125,15 +124,18 @@ function pageType2() {
         innerHtml += "<div class='row'>";
         innerHtml += "<div class='col-lg-6'>";
         innerHtml += "<div class='input-group'>";
-        innerHtml += "<input type='text' class='form-control' placeholder='请输入管理者昵称' id='leaderName'>";
+        innerHtml += "<input type='text' class='form-control' placeholder='请输入成员昵称' id='leaderName'>";
         innerHtml += "<div class='input-group-btn'>";
         innerHtml += "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>管理者昵称<span class='caret'></span></button>";
         innerHtml += "<ul class='dropdown-menu dropdown-menu-right'>";
         var userInfoList = JSON.parse(res.data);
+        if(userInfoList.length==0){
+            innerHtml += "<li><p>无任何符合条件的成员</p></li>";
+        }
         for (var index in userInfoList) {
             var userInfo = userInfoList[index];
             if (userInfo.jurisdiction == 2) {
-                innerHtml += "<li><a >　<span class='glyphicon glyphicon-user' aria-hidden='true'>　</span>　" + userInfo.nick_name + "　　　　　　<span class='glyphicon glyphicon-asterisk' aria-hidden='true'></span>　个人总积分　:　" + userInfo.point + "　点　　　　　　<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>　当前分组　:　"+getGroupName(userInfo.group_name)+"</a></li>";
+                innerHtml += "<li><a onclick='selectGroupLerder("+changeToString(userInfo.nick_name)+")'>　<span class='glyphicon glyphicon-user' aria-hidden='true'>　</span>　" + userInfo.nick_name + "　　　　　　<span class='glyphicon glyphicon-asterisk' aria-hidden='true'></span>　个人总积分　:　" + userInfo.point + "　点　　　　　　<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>　当前分组　:　"+getGroupName(userInfo.group_name)+"</a></li>";
                 if(index!=userInfoList.length-1){
                     innerHtml += "<li role='separator' class='divider'></li>";
                 }      
@@ -145,23 +147,45 @@ function pageType2() {
         innerHtml += "</div>";
         innerHtml += "</div>";
         innerHtml += "<div class='form-group'>";
-        innerHtml += "<label for='exampleInputFile'>File input</label>";
-        innerHtml += "<input type='file' id='exampleInputFile'>";
-        innerHtml += "<p class='help-block'>Example block-level help text here.</p>";
+        innerHtml += "<p></p><label for='exampleInputFile'>分组介绍</label>";
+        innerHtml += "<textarea class='form-control' id='group_introduce' rows='2'></textarea>";
         innerHtml += "</div>";
-        innerHtml += "<div class='checkbox'>";
-        innerHtml += "<label>";
-        innerHtml += "<input type='checkbox'> Check me out";
-        innerHtml += "</label>";
+        innerHtml += "<div class='buttonbox'>";
+        innerHtml += "<button type='button' class='btn btn-default btn-lg  active'>重置</button>";
+        innerHtml += "<button type='button' class='btn btn-primary btn-lg  active'>创建</button>";
         innerHtml += "</div>";
-        innerHtml += "<button type='submit' class='btn btn-default'>Submit</button>";
         innerHtml += "</form>";
         $("#handlebody").html("");
         $("#handlebody").html(innerHtml);
+        sessionStorage.setItem("pageType2Date",res.data); 
     }
 }
-function createGroupUl(data) {
-    innerHtml = "";
+
+$("#handlebody").on("keyup","#leaderName",function(){
+    var userInfoList=JSON.parse(sessionStorage.getItem("pageType2Date"));
+    var name = $("#leaderName").val();
+    if(userInfoList.length!=0){
+      var innerHtml="";
+        for (var index in userInfoList) {
+            var userInfo = userInfoList[index];
+            if (userInfo.jurisdiction == 2&&(userInfo.nick_name).indexOf(name) >= 0) {
+                innerHtml += "<li><a onclick='selectGroupLerder("+changeToString(userInfo.nick_name)+")'>　<span class='glyphicon glyphicon-user' aria-hidden='true'>　</span>　" + userInfo.nick_name + "　　　　　　<span class='glyphicon glyphicon-asterisk' aria-hidden='true'></span>　个人总积分　:　" + userInfo.point + "　点　　　　　　<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>　当前分组　:　"+getGroupName(userInfo.group_name)+"</a></li>";
+                if(index!=userInfoList.length-1){
+                    innerHtml += "<li role='separator' class='divider'></li>";
+                }      
+            }
+        }    
+        $("ul").empty();
+        $("ul").html(innerHtml);
+      if($("ul li:last-child").attr("class")=="divider") {
+        $("ul li:last-child").remove();
+      } 
+        $(".input-group-btn").addClass("open");
+    }
+});
+
+function selectGroupLerder(str){
+    $("#leaderName").val(str);
 }
 
 function getAppUserInfo(object) {
@@ -180,6 +204,14 @@ function getJurisdiction(str) {
     } else if (str.toString() == "2") {
         return "成员";
     }
+}
+function getLayxId() {
+    var id;
+    if (self != top && self.frameElement && self.frameElement.tagName == "IFRAME") {
+        var layxWindow = $(self.frameElement).parents(".layx-window");
+        id = layxWindow.attr("id").substr(5);
+    }
+    return id;
 }
 
 function getGroupName(str) {
@@ -206,7 +238,7 @@ function agree(object, id, type) {
     jsonData.email = sessionStorage.getItem("email");
     jsonData.id = id;
     jsonData.type = type;
-    var res = tokenService("/application/agree", "PUT", false, JSON.stringify(jsonData));
+    var res = tokenService("/application/agree", " ", false, JSON.stringify(jsonData));
     if (res.result) {
         $("button[name='" + className + "']").attr('disabled', true);
         $("button[name='" + className + "']").css("background", "grey");

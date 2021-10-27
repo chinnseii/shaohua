@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-15 16:24:23
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-19 18:09:16
+ * @LastEditTime: 2021-10-26 13:57:59
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\controller\UserContorller.java
  */
 package com.kaoqin.stzb.controller;
@@ -57,7 +57,7 @@ public class UserContorller {
     @PassToken
     @ResponseBody
     @PostMapping(value = "/user/register/email")
-    @Operation(summary = "发送注册邮件")
+    @Operation(summary = "发送邮箱验证码")
     public String emailCode(@RequestParam("email") String email, HttpServletRequest httpServletRequest) {
         String ipAddr = httpServletRequest.getRemoteAddr();
         if (redisUtil.hasKey(ipAddr)) {
