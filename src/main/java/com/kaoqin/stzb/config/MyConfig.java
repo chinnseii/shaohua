@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-07-15 16:24:23
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-25 16:27:11
+ * @LastEditTime: 2021-10-27 16:57:39
  * @FilePath: \stzb\src\main\java\com\kaoqin\stzb\config\MyConfig.java
  */
 package com.kaoqin.stzb.config;
@@ -10,7 +10,6 @@ import com.kaoqin.stzb.interceptor.AuthenticationInterceptor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

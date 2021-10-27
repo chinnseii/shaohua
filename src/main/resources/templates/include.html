@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-19 13:24:09
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-14 14:05:08
+ * @LastEditTime: 2021-10-27 15:45:54
  * @FilePath: \stzb\src\main\resources\templates\include.html
 -->
 <header th:fragment="header">
@@ -31,15 +31,6 @@
                                 aria-haspopup="true" aria-expanded="false"> <span class="nickName"></span><span
                                     class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li class="disabled"><a href="#">レベル<span id="level" style="float: right;"></span>
-                                        <div class="progress">
-                                            <div class="progress-bar progress-bar-success" role="progressbar"
-                                                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
-                                                id="level-progress">
-                                                %
-                                            </div>
-                                        </div>
-                                    </a> </li>
                                 <li><a href="#">消息</a></li>
                                 <li><a href="#">收藏</a></li>
                                 <li><a href="#">歴史</a></li>
@@ -48,37 +39,18 @@
                             </ul>
                         </li>
                     </ul>
-                    <form class="navbar-form navbar-right">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="请输入同盟ID或同盟名">
-                        </div>
-                        <button type="submit" class="btn btn-default">搜索</button>
-                    </form>
-                </div><!-- /.navbar-collapse -->
-            </div><!-- /.container-fluid -->
+                </div>
+            </div>
             <div class="jumbotron">
                 <div class="row">
-                    <div class="user_view">
-                        <div class="view_switch">
-                        </div>
-                        <div class="user_message">
-                            <div class="col-md-1">
-                                <div class="um_photo">
-                                    <img class="profilephoto" src="" alt="loading">
-                                    <a id="changeProfilePhoto">更换头像</a>
-                                </div>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="um_right">
-                                    <div class="umr_name">
-                                        <span id="nickName" class="nickName"></span>
-                                    </div>
-                                    <div class="umr_word">
-                                        <input type="text" placeholder="编辑个性签名" id="signature">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="um_photo">
+                        <img class="profilephoto" src="" alt="loading">
+                        <a id="changeProfilePhoto">更换头像</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="umr_word">
+                        <input type="text" placeholder="编辑个性签名" id="signature">
                     </div>
                 </div>
             </div>
@@ -94,7 +66,7 @@
                             id="allStarCount"></span></a></div>
                 <div class="col-md-1"><a href=""><img src="img/subscribe.png" alt="">关注<span
                             id="allStarredCount"></span></a></div>
-                <div class="col-md-1"><a href=""><img src="img/SetUp.png" alt="">设定</a></div>         
+                <div class="col-md-1"><a href=""><img src="img/SetUp.png" alt="">设定</a></div>
             </div>
         </nav>
     </body>

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-23 14:31:01
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-26 18:04:54
+ * @LastEditTime: 2021-10-27 17:00:06
  * @FilePath: \stzb\src\main\resources\static\js\index.js
  */
 /**
@@ -13,8 +13,10 @@ function initIndex() {
     var result = tokenService("/userInfo", "GET", false, { 'email': sessionStorage.getItem("email") });
     if (result.result) {
         var userInfo = JSON.parse(result.data);
-        $("title").html(userInfo.nick_name)
+        $("title").html(userInfo.nick_name);
+        $(".nickName").html(userInfo.nick_name);
         $("#signature").val(userInfo.signature);
+        sessionStorage.setItem("signature", userInfo.signature);
         sessionStorage.setItem("avatar_path", "profilephoto/" + userInfo.avatar_path);
         $(".profilephoto").attr("src", sessionStorage.getItem("avatar_path"));
         $("#myAlliance").css({ "background-color": "aliceblue" });
@@ -235,10 +237,14 @@ function allianceIdHandle(id) {
  * @return {*}
  */
 $("#changeProfilePhoto").click(function () {
-    layx.iframe('shadow-color', 'アバター更新', 'changeProfilePhoto', {
-        shadable: 0.8
-    });
-    layx.setSize('shadow-color', { width: 950, height: 600 });
+    if (is_mobile()) {
+        window.location.href = "changeProfilePhoto";
+    } else {
+        layx.iframe('resize-ct shadow-color', '头像更新', 'changeProfilePhoto', {
+            shadable: 0.8
+        });
+        layx.setSize('resize-ct shadow-color', { width: 950, height: 600 });
+    }
 });
 /**
  * @description: 登出
@@ -246,31 +252,25 @@ $("#changeProfilePhoto").click(function () {
  * @return {*}
  */
 function loginOut() {
-    layx.confirm('登出', '是否要退出登录', null, {
-        buttons: [
-            {
-                label: 'YSE',
-                callback: function (id, button, event) {
-                    sessionStorage.clear();
-                    window.location.href = "login";
-                }
-            },
-            {
-                label: 'NO',
-                callback: function (id, button, event) {
-                    layx.destroy(id);
-                }
-            }
-        ]
-    });
+    var a = window.confirm("是否要退出登录");
+    if (a) {
+        sessionStorage.clear();
+        window.location.href = "login";
+    } else {
+        return false;//返回
+    }
 }
 
 function allianceAppHandle(object, pageType) {
     sessionStorage.setItem("pageType", pageType);
-    layx.iframe('shadow-color', $(object).html(), 'handlePage', {
-        shadable: 0.8
-    });
-    layx.setSize('shadow-color', { width: 700, height: 600 });
+    if (is_mobile()) {
+        window.location.href = "handlePage";
+    } else {
+        layx.iframe('resize-ct shadow-color', $(object).html(), 'handlePage', {
+            shadable: 0.8,
+        });
+        layx.setSize('resize-ct shadow-color', { width: 700, height: 600 });
+    }
 }
 /**
  * @description: 时间变换成年月日 00:00:00格式
@@ -279,41 +279,6 @@ function allianceAppHandle(object, pageType) {
  */
 function getTime(date) {
     return date.substring(0, 4) + "年" + date.substring(4, 6) + "月" + date.substring(6, 8) + "日 " + date.substring(8, 10) + ":" + date.substring(10, 12) + ":" + date.substring(12, 14)
-}
-
-
-/**
- * @description: 删除一条笔记
- * @param {*} noteId
- * @return {*}
- */
-function deleteNote(noteId) {
-    layx.confirm('WARN', 'このノートを削除しますか', function (id) {
-        var jsonObject = new Object();
-        jsonObject.id = noteId;
-        jsonObject.email = sessionStorage.getItem("email");
-        var jsonData = JSON.stringify(jsonObject);
-        var json = javaService("/deleteNote", jsonData);
-        if (json.result) {
-            layx.msg('ノート作成成功しました。', { dialogIcon: 'success' });
-        }
-        layx.destroy('loadId');
-        parent.location.reload();
-    }, { dialogIcon: 'warn' });
-}
-
-
-/**
- * @description:编辑笔记 
- * @param {*} noteId
- * @return {*}
- */
-function editNote(noteId) {
-    sessionStorage.setItem("editNoteId", noteId);
-    layx.iframe('shadow-color', 'ノート作成', 'editNote', {
-        shadable: 0.8
-    });
-    layx.setSize('shadow-color', { width: 700, height: 600 });
 }
 
 /**
@@ -327,8 +292,9 @@ function html2Escape(sHtml) {
     });
 }
 $("#signature").blur(function () {
-    var url = "/userInfo/signature/" + sessionStorage.getItem("email") + "/" + $("#signature").val();
-    if (sessionStorage.getItem("signature") != $("#signature").val()) {
+    var newSignature = $("#signature").val();
+    if (sessionStorage.getItem("signature") != newSignature) {
+        var url = "/userInfo/signature/" + sessionStorage.getItem("email") + "/" + newSignature;
         var result = tokenService(url, "PUT", false, null);
         if (result.result) {
             sessionStorage.setItem("signature", $("#signature").val());

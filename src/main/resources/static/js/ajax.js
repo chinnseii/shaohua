@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-07 10:08:39
  * @LastEditors: CHEN SHENGWEI
- * @LastEditTime: 2021-10-25 13:07:45
+ * @LastEditTime: 2021-10-27 14:54:17
  * @FilePath: \stzb\src\main\resources\static\js\ajax.js
  */
 /**
@@ -53,7 +53,7 @@ function noTokenService(url, type, async, jsonData) {
         async: async,
         dataType: 'JSON',
         contentType: "application/json; charset=utf-8",
-        data: jsonData,      
+        data: jsonData,
         success: function (value) {
             res = toObject(value);
             if (!res.result) {
@@ -79,7 +79,7 @@ function errorMsg(code, msg) {
         }
     }
     //警告
-    var codeList2 = new Array(507, 508, 509, 510, 511, 512, 513, 514, 515, 516,517,518,519,520,521);
+    var codeList2 = new Array(507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521);
     for (var a in codeList2) {
         if (codeList2[a] == code) {
             setTimeout(function () {
@@ -160,6 +160,22 @@ function errorCode(code) {
             }, 3000);
     }
 }
+
+function is_mobile() {
+    var regex_match = /(nokia|iphone|android|motorola|^mot-|softbank|foma|docomo|kddi|up.browser|up.link|htc|dopod|blazer|netfront|helio|hosin|huawei|novarra|CoolPad|webos|techfaith|palmsource|blackberry|alcatel|amoi|ktouch|nexian|samsung|^sam-|s[cg]h|^lge|ericsson|philips|sagem|wellcom|bunjalloo|maui|symbian|smartphone|midp|wap|phone|windows ce|iemobile|^spice|^bird|^zte-|longcos|pantech|gionee|^sie-|portalmmm|jigs browser|hiptop|^benq|haier|^lct|operas*mobi|opera*mini|320x320|240x320|176x220)/i;
+    var u = navigator.userAgent;
+    if (null == u) {
+        return true;
+    }
+    var result = regex_match.exec(u);
+
+    if (null == result) {
+        return false
+    }
+    return true
+
+}
+
 
 
 
