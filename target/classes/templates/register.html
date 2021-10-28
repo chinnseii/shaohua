@@ -1,0 +1,83 @@
+<!--
+ * @Date: 2021-10-11 17:11:34
+ * @LastEditors: CHEN SHENGWEI
+ * @LastEditTime: 2021-10-13 19:57:49
+ * @FilePath: \stzb\src\main\resources\templates\register.html
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>注册</title>
+	<link rel="stylesheet" href="../static/libs/particles/css/style.css">
+	<link rel="stylesheet" href="../static/libs/sweetalert2/sweetalert2.min.css">
+	<link rel="stylesheet" href="../static/css/base.css">
+	<link rel="stylesheet" href="../static/css/login.css">
+	<link href="css/layx.min.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<!-- particles.js container -->
+	<div id="particles-js"></div>
+	<div id="wrapper">
+		<div>
+			<img src="../static/img/lanbitou_logo.png" />
+			<h2>韶华考勤，让滑水怪无处可藏</h2>
+		</div>
+		<nav class="switch_nav">
+			<a href="javascript:;" id="switch_signup" class="switch_btn on">注册</a>
+			<a href="login" id="switch_login" class="switch_btn">登录</a>
+		</nav>
+		<form>
+			<ul class="group_input">
+				<li>
+					<input type="text" placeholder="游戏ID" class="name required" id="name" name="nickName" />
+				</li>
+				<li>
+					<input type="password" placeholder="密码(不少于6位)" class="psd required" id="psd" name="userPassword" />
+				</li>
+				<li>
+					<input type="text" placeholder="邮箱" class="mobile required" id="email" name="email" />
+				</li>
+				<li>
+					<input type="text" placeholder="请输入邮箱验证码" class="mobile required" id="emailcheck"
+						name="emailcheck" />
+				</li>
+				<li>
+					<button type="button" class="createEmailCode" onclick="createEmailCode()">发送验证码</button>
+				</li>
+			</ul>
+			<span class="result" style="color: red;height: 25px;line-height: 40px;
+			font-size: 15px;"></span>
+			<button type="button" class="submit_btn" id="btnSubmit">注册韶华</button>
+			<span class="agreement-tip">点击「注册」按钮，即代表你同意<a href="javascript:;">《韶华协议》</a></span>
+		</form>
+		<div class="QRcode_btn">
+			<div type="submit" class="submit_btn download_btn">请皮卡丘喝奶茶</div>
+			<div class="QRcode">
+				<img src="../static/img/QRcode.png" alt="QRcode" />
+				<div class="box"></div>
+			</div>
+		</div>
+		<div id="footer">
+			<span>&copy;2017韶华</span><span>·</span><a href="javascript:;">韶华圆桌</a><span>·</span><a
+				href="javascript:;">发现</a><span>·</span><a href="javascript:;">移动应用</a><span>·</span><a
+				href="javascript:;">使用机构账号登录</a><span>·</span><a href="javascript:;">联系我们</a><span>·</span><a
+				href="javascript:;">加入韶华</a><br />
+			<span>·</span><a
+				href="javascript:;">京ICP证110745号</a><span>·</span><span>京公网安备xxxxxxxxx号</span><span>·</span><a
+				href="javascript:;">出版物经营许可证</a>
+		</div>
+	</div>
+	<script src="../static/libs/jquery-1.12.4/jquery.min.js"></script>
+	<script src="../static/libs/sweetalert2/sweetalert2.min.js"></script>
+	<script src="../static/libs/particles/particles.min.js"></script>
+	<script src="../static/libs/particles/js/app.js"></script>
+	<script src="/libs/Layx/layx.min.js"></script>
+	<script src="/js/register.js"></script>
+	<script src="/js/ajax.js"></script>
+	<script src="/js/errorCode.js"></script>
+</body>
+
+</html>

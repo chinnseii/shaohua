@@ -1,0 +1,35 @@
+.mcl_topvideo .jumbotron{
+    background-color: aliceblue;
+}
+.mcl_topvideo .jumbotron a {
+    margin-bottom: 10px;
+    margin-left: 1.1em;
+    margin-right: 18px;
+}
+#createAlliance .form-inline{
+    margin-left: 1.2em;
+}
+
+#createAlliance .form-inline input{
+    margin-bottom: 10px;
+}
+#searchAlliance {
+    margin-left: 1.3em;
+}
+
+textarea.form-control {
+    height: auto;
+    margin-bottom: 10px;
+    width: 12.8em !important; 
+}
+.btn {
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+.badge{
+    color: red !important;  
+}
+
+@-moz-document url-prefix() {
+    fieldset { display: table-cell; }
+  }

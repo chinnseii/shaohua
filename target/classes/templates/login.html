@@ -1,0 +1,87 @@
+<!--
+ * @Date: 2021-10-11 17:11:34
+ * @LastEditors: CHEN SHENGWEI
+ * @LastEditTime: 2021-10-14 13:23:02
+ * @FilePath: \stzb\src\main\resources\templates\login.html
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>登录</title>
+	<link rel="stylesheet" href="/libs/particles/css/style.css">
+	<link rel="stylesheet" href="/css/base.css">
+	<link rel="stylesheet" href="/css/login.css" />
+</head>
+
+<body>
+	<!-- particles.js container -->
+	<div id="particles-js"></div>
+	<div id="wrapper">
+		<div>
+			<img src="/img/lanbitou_logo.png" />
+			<h2>韶华考勤，让滑水怪无处可藏</h2>
+		</div>
+		<nav class="switch_nav">
+			<a href="register" id="switch_signup" class="switch_btn">注册</a>
+			<a href="javascript:;" id="switch_login" class="switch_btn on">登录</a>
+			<div class="switch_bottom" id="switch_bottom"></div>
+		</nav>
+		<div id="login">
+			<form>
+				<ul class="group_input">
+					<li>
+						<input type="text" class="mobile required" id="email" placeholder="邮箱" name="email" />
+					</li>
+					<li>
+						<input type="password" class="psd required" id="psd" placeholder="密码" name="userPassword" />
+					</li>
+				</ul>
+				<span class="result" style="color: red;height: 25px;line-height: 40px;
+				font-size: 15px;"></span>
+				<button type="button" class="submit_btn" id="btnSubmit">登录</button>
+			</form>
+			<div class="states">
+				<span class="left"><a href="javascript:;">手机验证码登陆</a></span>
+				<span class="right"><a href="javascript:;">无法登陆？</a></span>
+			</div>
+			<div class="states">
+				<a href="javascript:;" class="social_account">社交账号登陆</a>
+				<div class="states three_MinIcon">
+					<a href="javascript:;" class="MinIcon_weixin"><img src="/img/icon_weixin.jpg"
+							style="width:20px;height:18px" /></a>
+					<a href="javascript:;" class="MinIcon_weibo"><img src="/img/icon_weibo.jpg"
+							style="width:20px;height:18px" /></a>
+					<a href="javascript:;" class="MinIcon_qq"><img src="/img/icon_qq.jpg"
+							style="width:20px;height:18px" /></a>
+				</div>
+			</div>
+		</div>
+		<div class="QRcode_btn">
+			<div type="submit" class="submit_btn download_btn">请皮卡丘喝奶茶</div>
+			<div class="QRcode">
+				<img src="/img/QRcode.png" alt="QRcode" />
+				<div class="box"></div>
+			</div>
+
+		</div>
+		<div id="footer">
+			<span>&copy;2017韶华</span><span>·</span><a href="javascript:;">圆桌</a><span>·</span><a
+				href="javascript:;">发现</a><span>·</span><a href="javascript:;">移动应用</a><span>·</span><a
+				href="javascript:;">使用机构账号登录</a><span>·</span><a href="javascript:;">联系我们</a><span>·</span><a
+				href="javascript:;">加入韶华</a><br />
+			<span>·</span><a
+				href="javascript:;">京ICP证110745号</a><span>·</span><span>京公网安备xxxxxxxxxx号</span><span>·</span><a
+				href="javascript:;">出版物经营许可证</a>
+		</div>
+	</div>
+	<script src="/libs/jquery-1.12.4/jquery.min.js"></script>
+	<script src="/libs/particles/particles.min.js"></script>
+	<script src="/libs/particles/js/app.js"></script>
+	<script src="/js/ajax.js"></script>
+	<script src="/js/login.js"></script>
+
+</body>
+
+</html>
