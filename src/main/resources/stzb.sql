@@ -21,7 +21,8 @@ create table if not exists userinfo(
     , signature varchar (255) comment '个性签名'
     , message int comment '消息'
     , nick_name varchar (20) not null comment '游戏名'
-    , point int comment '个人积分'
+    , point int comment '个人总积分'
+    , point_last int comment '剩余积分'
     , alliance_id int ZEROFILL comment '盟id'
     , alliance_name varchar (10) comment '盟名称'
     , group_id int comment '团id'
@@ -50,9 +51,11 @@ drop table if exists groupmaster;
 
 create table if not exists groupmaster( 
     groupid int primary key auto_increment comment '团id'
-    , alliance_id int comment '盟id'
+    , alliance_id int not null comment '盟id'
+    , leader_id int comment '团长ID'
+    , leader_name varchar (20) not null comment '团长昵称'
     , group_name varchar (20) not null comment '团名称'
-    , group_introduce varchar (50) not null comment '团介绍'
+    , group_introduce varchar (50) comment '团介绍'
     , population int not null comment '团人口'
     , create_time datetime DEFAULT CURRENT_TIMESTAMP comment '创建时间'
     , update_time datetime DEFAULT CURRENT_TIMESTAMP 
@@ -78,6 +81,7 @@ CREATE TABLE if not exists task(
     , update_time datetime DEFAULT CURRENT_TIMESTAMP 
         ON UPDATE CURRENT_TIMESTAMP comment '更新时间'
 ); 
+
 drop table if exists emailmaster; 
 
 create table if not exists emailmaster( 
@@ -88,7 +92,8 @@ create table if not exists emailmaster(
     , update_time datetime DEFAULT CURRENT_TIMESTAMP 
         ON UPDATE CURRENT_TIMESTAMP comment '更新时间'
 ); 
-use stzb;
+
+
 drop table if exists application; 
 
 create table if not exists application( 
@@ -104,3 +109,4 @@ create table if not exists application(
     , update_time datetime DEFAULT CURRENT_TIMESTAMP 
         ON UPDATE CURRENT_TIMESTAMP comment '更新时间'
 );
+
